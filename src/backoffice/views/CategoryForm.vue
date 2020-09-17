@@ -55,6 +55,7 @@ export default {
       name: '',
       description: '',
       file: null,
+      fileName: '',
       /***** Is editing  *****/
     }
   },
@@ -127,6 +128,7 @@ export default {
     handleImage: function(event)
     {
         const selectedImage = event.target.files[0];
+        this.fileName = selectedImage.name;
         this.createBase64Img(selectedImage);
     },
     createBase64Img: function(fileObject){
@@ -152,6 +154,7 @@ export default {
             if (this.file != null)
             {
               item["ImageUrl"] = this.file;
+              item["ImageName"] = this.fileName;
             }
             //If I am editing
             if (this.id){

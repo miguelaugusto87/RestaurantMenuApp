@@ -90,6 +90,10 @@
             <br/>
 
             <ion-button expand="full" color="primary" @click="saveProduct()">{{ title }}</ion-button>
+
+            <div v-if="spinner">
+              <ion-spinner  name="lines" class="spinner"></ion-spinner>
+            </div>
         <!-- </ion-card>  -->
 
     </ion-content>
@@ -122,6 +126,7 @@ export default {
       sourceMenuId: null,
 
       file: null,
+      fileName: '',
       qr: '',
     }
   },
@@ -229,6 +234,7 @@ export default {
     handleImage: function(event)
     {
         const selectedImage = event.target.files[0];
+        this.fileName = selectedImage.name;
         this.createBase64Img(selectedImage);
     },
     createBase64Img: function(fileObject){
@@ -253,7 +259,7 @@ export default {
     //Create or edit a new product
     saveProduct: function(){
 
-
+        this.spinner = true
         if (this.isValidForm())
         {
               let item = {
@@ -269,6 +275,7 @@ export default {
             if (this.file != null)
             {
               item["ImageUrl"] = this.file;
+              item["ImageName"] = this.fileName;
             }
             //If I am editing
             if (this.id){
@@ -276,6 +283,7 @@ export default {
               item['BarCode'] = this.id;
               Api.putIn(this.modelName, item)
                   .then(response => {
+                        this.spinner = false;
                         this.ShowMessage(this.$t('backoffice.list.messages.infoDeleteSuccess'),
                              this.$t('backoffice.list.messages.messageEditSuccessProduct'), 
                                 this.$t('backoffice.list.messages.titleEditProduct'));
@@ -293,6 +301,7 @@ export default {
                         return response;
                   })
                   .catch(e => {
+                        this.spinner = false;
                         console.log(e);
                         this.ShowMessage(this.$t('backoffice.list.messages.errorTitle'),
                                this.$t('backoffice.list.messages.errorMessage'),
@@ -303,6 +312,7 @@ export default {
               //Else, I am created a new category
               Api.postIn(this.modelName, item)
                   .then(response => {
+                      this.spinner = false;
                       this.ShowMessage(this.$t('backoffice.list.messages.infoDeleteSuccess'),
                              this.$t('backoffice.list.messages.messageCreateSuccessProduct'), 
                                 this.$t('backoffice.list.messages.titleCreateProduct'));
@@ -320,6 +330,7 @@ export default {
                       return response;
                   })
                   .catch(e => {
+                      this.spinner = false;
                       console.log(e);
                       this.ShowMessage(this.$t('backoffice.list.messages.errorTitle'),
                           this.$t('backoffice.list.messages.errorMessage'),
@@ -367,5 +378,15 @@ export default {
     
 </script>
 <style>
+
+.spinner {
+    margin-top: 50%;
+    display: inline-block;
+    position: relative;
+    width: 70px;
+    height: 70px;
+    color: var(--color);
+    user-select: none;
+}
 
 </style>
