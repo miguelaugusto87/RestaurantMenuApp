@@ -287,7 +287,7 @@ export default {
 
     logOut: function(){
       this.$store.commit("setAuthentication", false);
-      this.$router.push({path: '/home' })      
+      this.$router.push({path: '/' })
     },
     
     clientUpdateHisData: function(){
