@@ -39,7 +39,7 @@
         </ion-item>
 
         <ion-item v-if="selected=='PickUp'">
-          <ion-input type="time" name="pickup" :placeholder="placeholderPickUp"
+          <ion-input type="time" name="pickup" 
           @input="hourPick = $event.target.value" 
           v-bind:value="hourPick">
           </ion-input>
@@ -88,7 +88,7 @@ export default {
       phone:'' ,
       address:'',
       clientId:'',
-      hourPick:'',
+      hourPick:new Date().getHours()+':' +new Date().getMinutes(),
       spinner: false,
       order:{},
     }

@@ -13,6 +13,7 @@
             <router-link to="/shipping"><ion-button expand="full" strong color="tertiary">{{ $t('backoffice.options.manageShippings') }}</ion-button></router-link>
             <router-link to="/otherCharge"><ion-button expand="full" strong color="tertiary">{{ $t('backoffice.options.manageOtherCharges') }}</ion-button></router-link>
             <router-link to="/user"><ion-button expand="full" strong color="tertiary">{{ $t('backoffice.options.manageUsers') }}</ion-button></router-link>
+            <router-link to="/role"><ion-button expand="full" strong color="tertiary">{{ $t('backoffice.options.manageRoles') }}</ion-button></router-link>
         </div>
     </ion-content>
 </template>>

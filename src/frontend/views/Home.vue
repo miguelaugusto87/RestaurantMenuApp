@@ -5,7 +5,7 @@
         <ion-spinner  name="lines" class="spinner"></ion-spinner>
       </div>
 
-      <div v-if="!spinner">        
+      <div v-if="!spinner && clientId !=''">        
           <ion-button :disabled="isDelivery" :color="isDelivery ? 'primary' : 'light'" @click="deliveryAction">{{$t('frontend.app.deliver')}}</ion-button>
           <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
           <ion-button :disabled="isTable" :color="isTable ? 'primary' : 'light'" @click="openModal">{{$t('frontend.app.table')}}</ion-button> 
@@ -15,7 +15,7 @@
 
 
        
-      <div  v-if="!showProduct && !spinner">
+      <div  v-if="!showProduct && !spinner && clientId !=''">
         <h1>{{$t('frontend.home.selectCategory')}}</h1>
 
       <v-breakpoint>
@@ -112,13 +112,12 @@ export default {
   },
   mounted: function(){
 
+  
   },
   created: function(){
 
-    // this.devWidth = this.platform.width();
-
-    
-
+    console.log('CREATED')
+ 
     EventBus.$on('clientHasOrderSelected', (value) => {    
         this.orderSelected = value; 
     });
@@ -132,44 +131,50 @@ export default {
      this.cart = this.$route.params.cart;
    }
   
-
-  if (this.$route.params.clientId)
-   {
+    if (this.$route.params.clientId) {
      this.clientId = this.$route.params.clientId;
    }
   
+    if (this.$route.params.order) {
+        this.order = this.$route.params.order;
+        this.orderType = this.order.OrderType;
+        this.clientId = this.order.ClientId;
 
-  if (this.$route.params.order)
-   {
-     this.order = this.$route.params.order;
-      this.orderType = this.order.OrderType;
-      this.clientId = this.order.ClientId;
-       
-       if(this.order.OrderType === 'Delivery'){
-         
-        this.isDelivery = true;
-        this.isPick = false;
-        this.isTable = false;   
-       }
-      if(this.order.OrderType === 'PickUp'){
-        this.isDelivery = false;
-        this.isPick = true;
-        this.isTable = false;   
-       }
-       if(this.order.OrderType === 'On Table'){
-        this.isDelivery = false;
-        this.isPick = false;
-        this.isTable = true;   
-       }
-   }
-  
+        console.log('de la ruta')      
+            if( this.order.OrderType === 'Delivery'){         
+            this.isDelivery = true;
+            this.isPick = false;
+            this.isTable = false;   
+          }
+          if( this.order.OrderType === 'PickUp'){
+            this.isDelivery = false;
+            this.isPick = true;
+            this.isTable = false;   
+          }
+          if( this.order.OrderType === 'On Table'){
+            this.isDelivery = false;
+            this.isPick = false;
+            this.isTable = true;         
+          }
 
-    EventBus.$on('updateTable', (value) => {
-      return this.tableAction(value);    
-  });
+
+      }
+
+    EventBus.$on('updateTable', async (value) => {
+          // var beforeOrder = this.order.OrderType
+          // this.order.OrderType = 'On Table'
+        
+          await this.tableAction(value);    
+          // console.log('after table method: ' + this.order.OrderType + beforeOrder + this.orderType)
+
+          
+          
+      });
 
    this.fetchProducts();   
+
    this.fetchCategories();
+
   },
   data () {
     return {
@@ -186,6 +191,7 @@ export default {
       categories: [],
       prod: [],
       cart: [],
+      dateTime: new Date().getHours()+':' +new Date().getMinutes(),
       spinner: false,
       
       orderType:'',     
@@ -261,12 +267,15 @@ export default {
     },
      
     productsByCategory(categoryId, categoryName){ 
+      this.spinner = true;
       this.categoryName = categoryName;
       Api.getProductsByCategory(categoryId).then(response => {
           this.prod = response.data
            this.showProduct = true;
+           this.spinner = false;
         })
         .catch(e => {
+           this.spinner = false;
           console.log(e)
            return  this.$ionic.alertController
                     .create({
@@ -346,9 +355,7 @@ export default {
               
               this.orderType = "Delivery"
               this.address = data.address
-              this.isDelivery = true;
-              this.isPick = false;
-              this.isTable = false;  
+              this.changeOrderButton();  
               this.order.OrderType = "Delivery";
               this.order.AddressToDeliver = this.address; 
               this.order.ClientId = this.clientId,  
@@ -372,7 +379,7 @@ export default {
         cssClass: 'my-custom-class',
         header: this.$t('frontend.home.pickupDetail'),
         inputs: [         
-          {name: 'hourPick',  type: 'time',  placeholder: this.$t('frontend.home.pickTime'), },
+          {name: 'hourPick',  type: 'time',   value:this.dateTime },
         ],
         buttons: [
           {
@@ -387,12 +394,9 @@ export default {
                if(data.hourPick==='')
                   return this.alertRequiredDatas();
 
-
               this.orderType = "PickUp"
               this.hourToPick = data.hourPick
-              this.isDelivery = false;
-              this.isPick = true;
-              this.isTable = false; 
+              this.changeOrderButton(); 
               this.order.OrderType = "PickUp";
               this.order.HourToPick = this.hourToPick;   
               
@@ -413,32 +417,36 @@ export default {
 
      this.spinner = true
 
-     try {
-        const response = await Api.fetchById("Table", value);
-        if(response){
-          this.spinner = false     
-          this.tableService = response.data.Name
-          this.orderType = "On Table"
-          this.isDelivery = false;
-          this.isPick = false;
-          this.isTable = true;    
-          this.order.OrderType = "On Table";
-          this.order.tableService = this.tableService;        
-          EventBus.$emit('orderType', 'On Table' );
-          this.showProduct = false;  
-          console.log(JSON.stringify(this.order))
+        Api.fetchById("Table", value).then(response => {        
+        this.spinner = false
+          if(response.status === 200){
+            
+            this.tableService = response.data.Name
+            this.orderType = "On Table" 
+            this.showProduct = false;
+            this.isDelivery = false;
+            this.isPick = false;
+            this.isTable = true;             
+            this.order.OrderType = "On Table";
+            this.order.tableService = this.tableService;        
+            EventBus.$emit('orderType', 'On Table' );
+            this.changeOrderButton();
+                  
+            console.log(JSON.stringify(this.order))
+            this.spinner = false  
+            // return this.changeOrderButton();
         }
-        
-     } catch (error) {
-       console.log(error)
-      this.spinner = false
-      return this.notValidQr();
-     }   
-
+      })
+      .catch(e => {
+        this.spinner = false
+        console.log(e)
+        return this.notValidQr();
+      });
    },
 
     openModal() {
-    return this.$ionic.modalController
+      
+      return this.$ionic.modalController
       .create({
         component: QrCode,
         cssClass: 'my-custom-class',
@@ -474,6 +482,7 @@ export default {
     },
 
      notValidQr(){
+      this.changeOrderButton(); 
       return  this.$ionic.alertController
       .create({
           cssClass: 'my-custom-class',
@@ -483,13 +492,36 @@ export default {
           {
               text: this.$t('frontend.home.acept'),
               handler: () => {                                 
-                            
+                           
               },
           },
           ],
       })
       .then(a => a.present())
                   
+    },
+
+    changeOrderButton: function(){
+      console.log('order type: '+ this.orderType)
+       if(this.orderType === 'Delivery'){         
+        this.isDelivery = true;
+        this.isPick = false;
+        this.isTable = false;   
+       }
+      if(this.orderType === 'PickUp'){
+        this.isDelivery = false;
+        this.isPick = true;
+        this.isTable = false;   
+       }
+       if(this.orderType === 'On Table'){
+        this.isDelivery = false;
+        this.isPick = false;
+        this.isTable = true; 
+         
+       }
+       console.log('on table: ' + this.isTable)
+         console.log('pick: ' + this.isPick)
+         console.log('delivery: ' + this.isDelivery)
     }
 
   },

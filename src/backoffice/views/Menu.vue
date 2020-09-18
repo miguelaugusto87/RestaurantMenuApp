@@ -107,18 +107,18 @@ export default {
         }
         Api.putIn(this.modelName, item)
               .then(response => {
-                    this.ShowMessage(this.$t('backoffice.form.messages.activeMenu'), 
-                                        this.$t('backoffice.form.messages.menuChangeState'),
-                                            this.$t('backoffice.form.messages.activeMenu'));
+                    this.ShowMessage(this.$t('backoffice.list.messages.activeMenu'), 
+                                        this.$t('backoffice.list.messages.menuChangeState'),
+                                            this.$t('backoffice.list.messages.activeMenu'));
                     this.fetchMenus();
                     return response;
               })
               .catch(e => {
                     console.log(e);
                     this.fetchMenus();
-                    this.ShowMessage(this.$t('backoffice.form.messages.errorTitle'),
-                                        this.$t('backoffice.form.messages.errorMessage'),
-                                           this.$t('backoffice.form.messages.activeMenu'));
+                    this.ShowMessage(this.$t('backoffice.list.messages.errorTitle'),
+                                        this.$t('backoffice.list.messages.errorMessage'),
+                                           this.$t('backoffice.list.messages.activeMenu'));
 
               })
     },

@@ -44,10 +44,11 @@ methods: {
       EventBus.$emit('updateTable', this.result );
     },
 
-    async onInit (promise) {
-      try {
-        await promise
-      } catch (error) {
+    onInit (promise) {
+      promise.then(() => {
+        console.log('Successfully initilized! Ready for scanning now!')
+      })
+       .catch (error => {
         if (error.name === 'NotAllowedError') {
           this.error = "ERROR: you need to grant camera access permisson"
         } else if (error.name === 'NotFoundError') {
@@ -61,7 +62,7 @@ methods: {
         } else if (error.name === 'StreamApiNotSupportedError') {
           this.error = "ERROR: Stream API is not supported in this browser"
         }
-      }
+      })
     },
 
     dismissQr(){

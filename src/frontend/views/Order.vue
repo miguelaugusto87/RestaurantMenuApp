@@ -10,7 +10,7 @@
 
                 <span v-if="scope.isSmall || scope.isMedium || scope.noMatch" >
 
-                    <div>
+                   
 
                         <ion-card>
 
@@ -26,13 +26,13 @@
 
                                 <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}}: </h3>
                                 <ion-datetime v-if="order.OrderType=='PickUp'" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
-                                <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-4" ></ion-input>
+                                <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
                                 <ion-label v-if="order.OrderType=='On Table'" style=" float: left;text-align: left;" class="subtitles-order menu-col-4">{{ orderInfo}}</ion-label>
                             </ion-card>
 
                                     
 
-                            <ion-card >
+                            <!-- <ion-card > -->
 
                                 <ion-label class="ion-text-wrap">
                                     <h2 class="titles-order" style="width: 50%;float: left;">{{$t('frontend.order.products')}}</h2>
@@ -41,30 +41,34 @@
 
                                 <ion-item-sliding>
                                     <ion-item >
-                                        <ion-label class="ion-text-wrap menu-col-6"><h2 style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.name')}}</h2> </ion-label>
-                                        <ion-label class="ion-text-wrap menu-col-2"> <h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.cant')}}</h3></ion-label>
-                                        <ion-label class="ion-text-wrap menu-col-2"><h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.price')}}</h3></ion-label>
-                                        <ion-label class="ion-text-wrap menu-col-2"><h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.total')}}</h3></ion-label>
+                                        <!-- <ion-label class="ion-text-wrap menu-col-6"><h2 style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.name')}}</h2> </ion-label> -->
+                                        <ion-label class="ion-text-wrap menu-col-4"> <h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.cant')}}</h3></ion-label>
+                                        <ion-label class="ion-text-wrap menu-col-4"><h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.price')}}</h3></ion-label>
+                                        <ion-label class="ion-text-wrap menu-col-4"><h3  style="font-size: 16px;font-weight: bold;">{{$t('frontend.order.total')}}</h3></ion-label>
                                     </ion-item>
                                 </ion-item-sliding>
                                 <ion-item-sliding v-for="product in cart" v-bind:key="product.ProductId">
                                     <ion-item>
-                                        <ion-label class="ion-text-wrap menu-col-6" >
-                                            <h2>{{ product.Name }}</h2> 
-                                        </ion-label>   
+                                         <div class="ion-text-wrap menu-col-12" >
+                                            <p>{{product.Name }}</p> 
+                                        </div>   
+                                    </ion-item>
 
-                                        <div class="ion-text-wrap menu-col-2" style="    padding-right: 10px;" >
-                                            <ion-input type="number"  style="border: 1px solid grey;" 
+                                    <ion-item>
+                                       
+
+                                        <div class="ion-text-wrap menu-col-4" style="    padding-right: 10px;" >
+                                            <ion-input type="number"  style="border: 1px solid grey; text-align:center" 
                                             :value="product.Cant" 
                                             @input="product.Cant = $event.target.value" 
                                             @change="getOtherCharges"
                                             ></ion-input>
                                         </div>
                                             
-                                        <ion-label class="ion-text-wrap menu-col-2" >
+                                        <ion-label class="ion-text-wrap menu-col-4" >
                                             <h3>$ {{ product.Price.toFixed(2)  }}</h3>
                                         </ion-label>
-                                        <ion-label class="ion-text-wrap menu-col-2" >
+                                        <ion-label class="ion-text-wrap menu-col-4" >
                                             <h3>$ {{ (product.Cant * product.Price).toFixed(2)  }}</h3>
                                         </ion-label>
                                     </ion-item>
@@ -85,12 +89,10 @@
                                     <ion-item-sliding v-for="charge in otherCharges" v-bind:key="charge.Id">
                                         <ion-item>
 
-                                            <ion-label class="menu-col-6">
-                                                <h2>{{ charge.Name }}</h2>
-                                            </ion-label>
-                                            <ion-label  class="menu-col-2"> </ion-label>
-                                            <ion-label  class="menu-col-2"> </ion-label>
-                                            <ion-label  class="menu-col-2" >
+                                            <div class="menu-col-8">
+                                                <p>{{ charge.Name }}</p>
+                                            </div>
+                                            <ion-label  class="menu-col-4" >
                                                 <h2>$ {{ charge.Price.toFixed(2) }}</h2>
                                             </ion-label>
                                             
@@ -101,25 +103,25 @@
 
                                 <ion-item-slidin style="border-top: 1px solid grey;" >
                                     <ion-item style="font-size: 16px;font-weight: bold;">
-                                        <ion-label class="menu-col-6"></ion-label>
+                                        <ion-label class="menu-col-4"></ion-label>
                                         <ion-label class="menu-col-4" style="text-align:right"><div class="menu-bold-title">{{$t('frontend.order.subtotal')}}  </div></ion-label>
-                                        <ion-label class="menu-col-2" >$ {{subTotal}}</ion-label>                    
+                                        <ion-label class="menu-col-4" >$ {{subTotal}}</ion-label>                    
                                     </ion-item>
                                     <ion-item style="font-size: 16px;font-weight: bold;"> 
-                                        <ion-label class="menu-col-6"> </ion-label>
+                                        <ion-label class="menu-col-4"> </ion-label>
                                         <ion-label class="menu-col-4" style="text-align:right" ><div class="menu-bold-title"> {{$t('frontend.order.taxe')}}</div></ion-label>
-                                        <ion-label class="menu-col-2">{{taxes}} %</ion-label>                    
+                                        <ion-label class="menu-col-4">{{taxes}} %</ion-label>                    
                                     </ion-item>
                                     <ion-item v-if="order.OrderType=='Delivery'" style="font-size: 16px;font-weight: bold;" > 
-                                        <ion-label class="menu-col-6"> </ion-label>
+                                        <ion-label class="menu-col-4"> </ion-label>
                                         <ion-label class="menu-col-4" style="text-align:right"> <div class="menu-bold-title">{{$t('frontend.order.deliver')}}  </div></ion-label>
-                                        <ion-label class="menu-col-2">$ {{shipping}}</ion-label>                    
+                                        <ion-label class="menu-col-4">$ {{shipping}}</ion-label>                    
                                     </ion-item>
                                     <hr>
                                     <ion-item style="    color: red;    font-size: 16px;    font-weight: bold;    text-transform: uppercase;"> 
-                                        <ion-label class="menu-col-6"> </ion-label>
+                                        <ion-label class="menu-col-4"> </ion-label>
                                         <ion-label class="menu-col-4" style="text-align:right" ><div class="menu-bold-title" style="color:red"> {{$t('frontend.order.total')}}  </div></ion-label>
-                                        <ion-label class="menu-col-2"><div class="menu-bold-title" style=" color:red">$ {{total}}  </div></ion-label>                    
+                                        <ion-label class="menu-col-4"><div class="menu-bold-title" style=" color:red">$ {{total}}  </div></ion-label>                    
                                     </ion-item>
                                 </ion-item-slidin>
 
@@ -134,7 +136,7 @@
                                     </ion-item>  
                                 </ion-item-slidin>
 
-                            </ion-card>
+                            <!-- </ion-card> -->
                             
 
                             <ion-card style="padding: 0 10px">
@@ -144,15 +146,15 @@
                                 </ion-label>
 
                                 <ion-item>
-                                    <ion-label class="menu-col-6" >{{$t('frontend.order.ccard')}}</ion-label> 
+                                    <div class="menu-col-6" ><p>{{$t('frontend.order.ccard')}}</p></div> 
                                     <ion-input type="number" required=true autocomplete="cc-number" class="menu-col-6"
                                     :value="cardNumber" @input="cardNumber = $event.target.value"
                                     @change="validateCard($event.target.value)" ></ion-input>
                                 </ion-item>
 
                                 <ion-item>
-                                    <ion-label class="menu-col-6" >{{$t('frontend.order.expcard')}}</ion-label>  
-                                    <ion-datetime class="menu-col-6" display-format="YYYY-MM" :max="dateTodaymax + 4 " 
+                                    <div class="menu-col-8" ><p>{{$t('frontend.order.expcard')}}</p></div>  
+                                    <ion-datetime class="menu-col-4" display-format="YYYY-MM" :max="dateTodaymax + 4 " 
                                     :min="dateTodaymin" required=true @ionChange="expirationCard = $event.target.value"> </ion-datetime>
                                 </ion-item>
                                                 
@@ -166,9 +168,6 @@
                             </div>
 
                         </ion-card>
-
-                    </div>
-
                 </span>
 
 
@@ -218,7 +217,7 @@
                                         </ion-label>   
 
                                         <div class="ion-text-wrap menu-col-2" style="    padding-right: 10px;" >
-                                            <ion-input type="number"  style="border: 1px solid grey;" 
+                                            <ion-input type="number"  style="border: 1px solid grey; text-align:center" 
                                             :value="product.Cant" 
                                             @input="product.Cant = $event.target.value" 
                                             @change="getOtherCharges"
@@ -606,12 +605,16 @@ export default {
         if(this.order.OrderType == 'On Table')
             this.orderInfo = this.order.tableService;
 
+            this.spinner = true
+
          Api.fetchById('Customer', this.order.ClientId)
         .then(response => {   
+             this.spinner = false
             this.CustomerEmail = response.data.EmailAddress;                   
             return this.CustomerName = response.data.Name;
         })
         .catch(e => {
+             this.spinner = false
             console.log(e);
             return  this.$ionic.alertController
                   .create({
@@ -694,7 +697,7 @@ export default {
     },
     
     addProductsToCart: function(){   
-        return this.$router.push({ name: 'Home', params: {cart: this.cart } })
+        return this.$router.push({ name: 'Home', params: {cart: this.cart, order: this.order, clientId:this.order.ClientId } })
     },
 
     changeOrderInfo: function(event){
@@ -830,4 +833,5 @@ export default {
         top: 20%;
         margin: 0 auto;
     }
+  
 </style>

@@ -14,7 +14,7 @@
             <div slot-scope="scope">
               <span v-if="scope.isSmall || scope.noMatch" > 
 
-                <div  v-for="pr in prod" :key="pr._id" class="menu-col-6 card-category">
+                <div  v-for="pr in prod" :key="pr._id" class="menu-col-12 card-category">
                     <ion-card  >
 
                       <ion-item>
@@ -185,21 +185,22 @@ export default {
             "ProductId": id,
             "Name": name,
             "Price": price,
-            "Cant": count,
+            "Cant": parseInt(count),
          }
-       
-         if (!this.cart.includes(p.Id)){
-           this.cart.push(p);
-           console.log(p)
-            EventBus.$emit('updateCart', this.cart );
-         }            
-         else
-            alert("Ya el producto se encuentra en el carrito");
-         console.log(this.cart);
+     
+        const index = this.cart.findIndex(pr => pr.ProductId === id);
+
+        if (index !== -1) {
+          this.cart[index].Cant += parseInt(count);          
+        } else
+         { this.cart.push(p); }   
+
+          EventBus.$emit('updateCart', this.cart );
+        
+          console.log(this.cart);
       },
      
      done: function(){
-        //this.$router.push({ name: 'Home', params: {cart: this.cart } })
       EventBus.$emit('showProduct', false );
       },
 

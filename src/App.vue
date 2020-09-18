@@ -57,6 +57,7 @@
            <ion-item v-if="getAuthenticated"><router-link to="/shipping" >{{ $t('backoffice.options.manageShippings') }}</router-link></ion-item>
            <ion-item v-if="getAuthenticated"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
            <ion-item v-if="getAuthenticated"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
+           <ion-item v-if="getAuthenticated"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
         </ion-content>
       </ion-menu>
 
@@ -287,7 +288,7 @@ export default {
 
     logOut: function(){
       this.$store.commit("setAuthentication", false);
-      this.$router.push({path: '/' })
+      this.$router.push({path: '/' })      
     },
     
     clientUpdateHisData: function(){
@@ -525,7 +526,9 @@ export default {
       })
       .then(a => a.present())
                   
-    }
+    },
+
+   
   
   },
 };

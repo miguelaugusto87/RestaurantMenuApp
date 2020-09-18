@@ -280,7 +280,8 @@ export default {
         return {
             order: [],
             CustomerName: '',
-            showStates: ''
+            showStates: '',
+            
 
         }
     },
