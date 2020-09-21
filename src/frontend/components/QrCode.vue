@@ -36,12 +36,15 @@ components:{
    
     QrcodeStream: QrcodeStream  ,
   },
+  beforeDestroy(){
+    console.log('Destroyed')
+  },
 methods: {
 
      onDecode (result) {
-      this.result = result
-      this.$ionic.modalController.dismiss();
+      this.result = result      
       EventBus.$emit('updateTable', this.result );
+      this.dismissQr();
     },
 
     onInit (promise) {

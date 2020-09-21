@@ -8,12 +8,24 @@
       <div v-if="!spinner && clientId !=''">        
           <ion-button :disabled="isDelivery" :color="isDelivery ? 'primary' : 'light'" @click="deliveryAction">{{$t('frontend.app.deliver')}}</ion-button>
           <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
-          <ion-button :disabled="isTable" :color="isTable ? 'primary' : 'light'" @click="openModal">{{$t('frontend.app.table')}}</ion-button> 
+          <ion-button :disabled="isTable" :color="isTable ? 'primary' : 'light'" @click="show">{{$t('frontend.app.table')}}</ion-button> 
           <ion-button color="primary"  @click="productDetails">{{cart.length}}<ion-icon name="cart"></ion-icon></ion-button>
       </div>
-      {{isDelivery}} |  {{isPick}} | {{isTable}} 
+     
 
+      <modal name="my-first-modal" width="80%" height="80%">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>{{ $t('frontend.home.tableQr') }}</ion-title>
+          </ion-toolbar>
+        </ion-header>
 
+        <div class="ion-padding" style="height: 90%">            
+          <qrcode-stream @decode="onDecode" @init="onInit" />
+        </div>
+
+    
+      </modal>
        
       <div  v-if="!showProduct && !spinner && clientId !=''">
         <h1>{{$t('frontend.home.selectCategory')}}</h1>
@@ -102,7 +114,7 @@ addIcons({
 import { Api } from '../../backoffice/api/api.js';
 import { EventBus } from '../event-bus';
  import Products from './Products'
- import QrCode from '../components/QrCode'
+ import { QrcodeStream } from 'vue-qrcode-reader'
  import { VBreakpoint } from 'vue-breakpoint-component'
 
 export default {
@@ -110,13 +122,7 @@ export default {
   props: {
     msg: String
   },
-  mounted: function(){
-
-  
-  },
   created: function(){
-
-    console.log('CREATED')
  
     EventBus.$on('clientHasOrderSelected', (value) => {    
         this.orderSelected = value; 
@@ -134,43 +140,16 @@ export default {
     if (this.$route.params.clientId) {
      this.clientId = this.$route.params.clientId;
    }
-  
+    
     if (this.$route.params.order) {
         this.order = this.$route.params.order;
         this.orderType = this.order.OrderType;
         this.clientId = this.order.ClientId;
 
-        console.log('de la ruta')      
-            if( this.order.OrderType === 'Delivery'){         
-            this.isDelivery = true;
-            this.isPick = false;
-            this.isTable = false;   
-          }
-          if( this.order.OrderType === 'PickUp'){
-            this.isDelivery = false;
-            this.isPick = true;
-            this.isTable = false;   
-          }
-          if( this.order.OrderType === 'On Table'){
-            this.isDelivery = false;
-            this.isPick = false;
-            this.isTable = true;         
-          }
-
+        this.changeOrderButton()
 
       }
-
-    EventBus.$on('updateTable', async (value) => {
-          // var beforeOrder = this.order.OrderType
-          // this.order.OrderType = 'On Table'
-        
-          await this.tableAction(value);    
-          // console.log('after table method: ' + this.order.OrderType + beforeOrder + this.orderType)
-
-          
-          
-      });
-
+ 
    this.fetchProducts();   
 
    this.fetchCategories();
@@ -207,9 +186,45 @@ export default {
   }, 
   components:{
     vueProduct: Products,
-    VBreakpoint: VBreakpoint
+    VBreakpoint: VBreakpoint,
+    QrcodeStream: QrcodeStream
   },  
   methods: {
+
+    show () {
+      this.$modal.show('my-first-modal');
+        },
+    hide () {
+      this.$modal.hide('my-first-modal');
+        },
+
+    onDecode (result) {
+        this.result = result      
+        this.tableAction(result)
+        this.hide();
+      },
+
+    onInit (promise) {
+      promise.then(() => {
+        console.log('Successfully initilized! Ready for scanning now!')
+      })
+       .catch (error => {
+        if (error.name === 'NotAllowedError') {
+          this.error = "ERROR: you need to grant camera access permisson"
+        } else if (error.name === 'NotFoundError') {
+          this.error = "ERROR: no camera on this device"
+        } else if (error.name === 'NotSupportedError') {
+          this.error = "ERROR: secure context required (HTTPS, localhost)"
+        } else if (error.name === 'NotReadableError') {
+          this.error = "ERROR: is the camera already in use?"
+        } else if (error.name === 'OverconstrainedError') {
+          this.error = "ERROR: installed cameras are not suitable"
+        } else if (error.name === 'StreamApiNotSupportedError') {
+          this.error = "ERROR: Stream API is not supported in this browser"
+        }
+      })
+    },
+
 
     fetchProducts: function(){
       this.spinner = true
@@ -415,26 +430,24 @@ export default {
 
     tableAction: async function(value) {
 
-     this.spinner = true
+      this.spinner = true
 
-        Api.fetchById("Table", value).then(response => {        
-        this.spinner = false
-          if(response.status === 200){
-            
-            this.tableService = response.data.Name
-            this.orderType = "On Table" 
-            this.showProduct = false;
-            this.isDelivery = false;
-            this.isPick = false;
-            this.isTable = true;             
-            this.order.OrderType = "On Table";
-            this.order.tableService = this.tableService;        
-            EventBus.$emit('orderType', 'On Table' );
-            this.changeOrderButton();
-                  
-            console.log(JSON.stringify(this.order))
-            this.spinner = false  
-            // return this.changeOrderButton();
+      Api.fetchById("Table", value).then(response => {        
+      this.spinner = false
+        if(response.status === 200){
+          
+          this.tableService = response.data.Name
+          this.orderType = "On Table" 
+          this.showProduct = false;
+          this.isDelivery = false;
+          this.isPick = false;
+          this.isTable = true;             
+          this.order.OrderType = "On Table";
+          this.order.tableService = this.tableService;        
+          EventBus.$emit('orderType', 'On Table' );
+          this.changeOrderButton();                  
+          console.log(JSON.stringify(this.order))
+          this.spinner = false             
         }
       })
       .catch(e => {
@@ -444,23 +457,6 @@ export default {
       });
    },
 
-    openModal() {
-      
-      return this.$ionic.modalController
-      .create({
-        component: QrCode,
-        cssClass: 'my-custom-class',
-        componentProps: {
-          data: {
-            content: 'New Content',
-          },
-          propsData: {
-            title: this.$t('frontend.home.tableQr'),
-          },
-        },
-      })
-      .then(m => m.present())
-  },
 
     alertRequiredDatas(){
       return  this.$ionic.alertController

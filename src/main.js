@@ -3,6 +3,7 @@
 //import 'mdbvue/lib/css/mdb.min.css'
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VModal from 'vue-js-modal'
 import { i18n } from '@/plugins/i18n'
 import App from './App.vue'
 
@@ -46,6 +47,7 @@ addIcons({
 
 Vue.use(Ionic);
 Vue.use(Vuex);
+Vue.use(VModal)
 
 const store = new Vuex.Store({
   state: {

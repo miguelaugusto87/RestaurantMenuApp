@@ -75,6 +75,8 @@
     </div>
     <ion-menu-controller></ion-menu-controller>
   </div>
+
+     
       
       <v-breakpoint v-if="clientId ==='' && !getAuthenticated" style="padding: 20px;">
       <div slot-scope="scope">
@@ -84,8 +86,20 @@
               <h3>{{$t('frontend.app.selectOrder')}}</h3>
               <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
               <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="selectOrder('PickUp', '')">{{$t('frontend.app.pickup')}}</ion-button>
-              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="openModal">{{$t('frontend.app.table')}}</ion-button>   
+              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
           </div>
+
+          <modal name="my-first-modal" width="80%" height="80%">
+            <ion-header>
+              <ion-toolbar>
+                <p>{{ $t('frontend.home.tableQr') }}</p>
+              </ion-toolbar>
+            </ion-header>
+
+            <div class="ion-padding" style="height: 90%">            
+              <qrcode-stream @decode="onDecode" @init="onInit" />
+            </div>    
+          </modal>
           
         </span>
         <span v-if="scope.isLarge || scope.isXlarge"> 
@@ -93,8 +107,22 @@
               <h3>{{$t('frontend.app.selectOrder')}}</h3>
               <ion-button style="margin: 12px;" size="large" round strong color="secondary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
               <ion-button style="margin: 12px;" size="large" strong color="secondary" @click="selectOrder('PickUp', '')">{{$t('frontend.app.pickup')}}</ion-button>
-              <ion-button style="margin: 12px;" size="large" strong color="secondary" @click="openModal">{{$t('frontend.app.table')}}</ion-button>   
-          </div>          
+              <ion-button style="margin: 12px;" size="large" strong color="secondary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
+          </div>  
+
+          <modal name="my-first-modal" :width="'50%'" height="50%">
+            <ion-header>
+              <ion-toolbar>
+                <p>{{ $t('frontend.home.tableQr') }}</p>
+              </ion-toolbar>
+            </ion-header>
+
+            <div class="ion-padding" style="height: 90%">            
+              <qrcode-stream @decode="onDecode" @init="onInit" />
+            </div>    
+          </modal>
+            
+
         </span>
       </div>
     </v-breakpoint>
@@ -141,10 +169,10 @@ addIcons({
 });
 
 import { Api } from './backoffice/api/api.js';
-import QrCode from './frontend/components/QrCode'
 import orderType from './frontend/components/selectOrderType'
 import { EventBus } from './frontend/event-bus';
 import { VBreakpoint } from 'vue-breakpoint-component'
+ import { QrcodeStream } from 'vue-qrcode-reader'
 
 
 export default {
@@ -230,14 +258,9 @@ export default {
       });
     });
   },
-  created: function(){ 
-  
-
-  },
+ 
   data () {
     return {
-      //campos generales
-
       modelName: 'Customer',
       orderType:'',
       isDelivery: false,
@@ -259,9 +282,10 @@ export default {
     }
   }, 
   components:{
-     Language,
-     Login,
-      VBreakpoint: VBreakpoint
+    Language,
+    Login,
+    VBreakpoint: VBreakpoint,
+    QrcodeStream: QrcodeStream
   },  
   computed:{
     getAuthenticated: function(){
@@ -274,16 +298,55 @@ export default {
   methods: {      
 
     openStart () {
-      document.querySelector('ion-menu-controller').open('start')     
-    },
+        document.querySelector('ion-menu-controller').open('start')     
+      },
+    
     openEnd () {
-      document.querySelector('ion-menu-controller').open('end')
-    },
-     closeEnd () {
-      document.querySelector('ion-menu-controller').close('end')
-    },
+        document.querySelector('ion-menu-controller').open('end')
+      },
+      
+    closeEnd () {
+
+        document.querySelector('ion-menu-controller').close('end')
+      },
+      
     closeStart () {
-      document.querySelector('ion-menu-controller').close('start')
+        document.querySelector('ion-menu-controller').close('start')
+      },
+
+    show () {
+        this.$modal.show('my-first-modal');
+          },
+    
+    hide () {
+      this.$modal.hide('my-first-modal');
+        },
+
+    onDecode (result) {
+        this.result = result      
+        this.tableAction(result)
+        this.hide();
+      },
+
+    onInit (promise) {
+      promise.then(() => {
+        console.log('Successfully initilized! Ready for scanning now!')
+      })
+       .catch (error => {
+        if (error.name === 'NotAllowedError') {
+          this.error = "ERROR: you need to grant camera access permisson"
+        } else if (error.name === 'NotFoundError') {
+          this.error = "ERROR: no camera on this device"
+        } else if (error.name === 'NotSupportedError') {
+          this.error = "ERROR: secure context required (HTTPS, localhost)"
+        } else if (error.name === 'NotReadableError') {
+          this.error = "ERROR: is the camera already in use?"
+        } else if (error.name === 'OverconstrainedError') {
+          this.error = "ERROR: installed cameras are not suitable"
+        } else if (error.name === 'StreamApiNotSupportedError') {
+          this.error = "ERROR: Stream API is not supported in this browser"
+        }
+      })
     },
 
     logOut: function(){
@@ -349,24 +412,21 @@ export default {
         })
 
     },
-
-  
-
-    openModal() {
-      return this.$ionic.modalController
-        .create({
-          component: QrCode,
-          cssClass: 'my-custom-class',
-          componentProps: {
-            data: {
-              content: 'New Content',
-            },
-            propsData: {
-              title: this.$t('frontend.home.tableQr'),
-            },
-          },
-        })
-        .then(m => m.present())
+ 
+    tableAction(value) {
+      this.spinner = true
+      Api.fetchById("Table", value).then(response => {  
+        this.spinner = false     
+        this.tableService = response.data.Name
+        if(this.clientId === '' )      
+          return this.selectOrder('On Table', this.tableService)
+      })
+      .catch(e => {
+        console.log(e)
+        this.spinner = false
+        return this.notValidQr();      
+        
+      });
     },
 
     selectOrder: function(type, table) {

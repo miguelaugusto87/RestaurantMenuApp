@@ -68,7 +68,7 @@ export default {
           if (this.isUser()){
               this.$store.commit("setAuthentication", true);
                 this.$router.push({
-                    name: 'ControlPanel'
+                    name: '/'
                 });
           }else{
               this.ShowMessage('Info', 'Email or password incorrect', 'Login');
