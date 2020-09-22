@@ -62,7 +62,7 @@
                 <ion-item-option color="primary" >
                 <ion-icon slot="icon-only" name="add" @click="addCategory(category._id)"></ion-icon>
                 </ion-item-option>
-                <ion-item-option color="success" >
+                <ion-item-option v-if="hasPermission('canEditProduct')" color="success" >
                 <ion-icon slot="icon-only" name="list" @click="productsByCategory(category._id)"></ion-icon>
                 </ion-item-option>
             </ion-item-options>
@@ -134,6 +134,28 @@ export default{
         }
   },
   methods:{
+        hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canEditProduct':
+                          res = roles[index].canEditProduct;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     isValidForm(){
         let errors = [];
         if (this.name == "")

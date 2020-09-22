@@ -70,4 +70,124 @@ export var Api = {
         return await axios.get(this.endPointURL + 'order?customer=' + id , {headers: {'Authorization': this.token}})
     },
 
+    hasPermission: function(user, permission){
+        let res = false;
+        for (let index = 0; index < user.Roles.length; index++) {
+             this.fetchById_Sync("Rol", user.Roles[index])
+                .then(response => {
+                   switch(permission){                        
+                        case 'canViewMenu':
+                            console.log("LLEGO");
+                            res = response.data.canViewMenu;
+                            break;
+                        case 'canCreateMenu':
+                            res = response.data.canCreateMenu;
+                            break;
+                        case 'canEditMenu':
+                            res = response.data.canEditMenu;
+                            break;
+                        case 'canDeleteMenu':
+                            res = response.data.canDeleteMenu;
+                            break;
+                        case 'canCreateCategory':
+                            res = response.data.canCreateCategory;
+                            break;
+                        case 'canEditCategory':
+                            res = response.data.canEditCategory;
+                            break;
+                        case 'canDeleteCategory':
+                            res = response.data.canDeleteCategory;
+                            break;
+                        case 'canCreateProduct':
+                            res = response.data.canCreateProduct;
+                            break;
+                        case 'canEditProduct':
+                            res = response.data.canEditProduct;
+                            break;
+                        case 'canDeleteProduct':
+                            res = response.data.canDeleteProduct;
+                            break;
+                        case 'canCreateCustomer':
+                            res = response.data.canCreateCustomer;
+                            break;
+                        case 'canEditCustomer':
+                            res = response.data.canEditCustomer;
+                            break;
+                        case 'canDeleteCustomer':
+                            res = response.data.canDeleteCustomer;
+                            break;
+                        case 'canCreateTable':
+                            res = response.data.canCreateTable;
+                            break;
+                        case 'canEditTable':
+                            res = response.data.canEditTable;
+                            break;
+                        case 'canDeleteTable':
+                            res = response.data.canDeleteTable;
+                            break;
+                        case 'canCreateTax':
+                            res = response.data.canCreateTax;
+                            break;
+                        case 'canEditTax':
+                            res = response.data.canEditTax;
+                            break;
+                        case 'canDeleteTax':
+                            res = response.data.canDeleteTax;
+                            break;
+                        case 'canCreateShipping':
+                            res = response.data.canCreateShipping;
+                            break;
+                        case 'canEditShipping':
+                            res = response.data.canEditShipping;
+                            break;
+                        case 'canDeleteShipping':
+                            res = response.data.canDeleteShipping;
+                            break;
+                        case 'canCreateOtherCharge':
+                            res = response.data.canCreateOtherCharge;
+                            break;
+                        case 'canEditOtherCharge':
+                            res = response.data.canEditOtherCharge;
+                            break;
+                        case 'canDeleteOtherCharge':
+                            res = response.data.canDeleteOtherCharge;
+                            break;
+                        case 'canCreateUser':
+                            res = response.data.canCreateUser;
+                            break;
+                        case 'canEditUser':
+                            res = response.data.canEditUser;
+                            break;
+                        case 'canDeleteUser':
+                            res = response.data.canDeleteUser;
+                            break;
+                        case 'canCreateRole':
+                            res = response.data.canCreateRole;
+                            break;
+                        case 'canEditRole':
+                            res = response.data.canEditRole;
+                            break;
+                        case 'canDeleteRole':
+                            res = response.data.canDeleteRole;
+                            break;
+                        case 'canEditOrder':
+                            res = response.data.canEditOrder;
+                            break;
+                        default:
+                            break;
+                   }
+                   if (res)
+                   { 
+                       console.log("Se ejecuta despues: " + res);
+                        return res;
+                   }
+                        
+                })
+                .catch(e => {
+                    console.log(e);
+                })
+        }
+        return res;
+    }
+
 }

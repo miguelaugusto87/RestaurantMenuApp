@@ -66,7 +66,18 @@ export default {
               return;
           }
           if (this.isUser()){
+              let user = this.users[this.indexUserIsLogin];
               this.$store.commit("setAuthentication", true);
+              this.$store.commit("setUser", user);
+
+              let roles = [];
+              user.Roles.forEach(rol_id => {
+                  Api.fetchById("rol", rol_id).then(response => {
+                      roles.push(response.data);
+                  })
+              });
+              this.$store.commit("setRoles", roles);
+
                 this.$router.push({
                     name: '/'
                 });

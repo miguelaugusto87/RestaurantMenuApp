@@ -24,12 +24,13 @@
         </ion-item>
         <ion-item>
             <p>{{$t('backoffice.form.fields.permissions')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectAll($event.target.checked)"></ion-checkbox>
+            <ion-checkbox color="danger" slot="end" @ionChange="selectDeselectAll($event.target.checked)" 
+            :checked="all"></ion-checkbox>
         </ion-item>
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionMenu')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectMenu($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectMenu($event.target.checked)"
                 :checked="menu"></ion-checkbox>
         </ion-item>
         <ion-list>
@@ -45,7 +46,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionCategory')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectCategory($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectCategory($event.target.checked)"
                 :checked="category"></ion-checkbox>
         </ion-item>
         <ion-list>
@@ -61,7 +62,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionProduct')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectProduct($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectProduct($event.target.checked)"
                 :checked="product"></ion-checkbox>
         </ion-item>
         <ion-list>
@@ -77,7 +78,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionCustomer')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectCustomer($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectCustomer($event.target.checked)"
                 :checked="customer"
                 ></ion-checkbox>
         </ion-item>
@@ -95,7 +96,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionTable')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectTable($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectTable($event.target.checked)"
                 :checked="table"></ion-checkbox>
         </ion-item>
         <ion-list>
@@ -112,7 +113,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionTax')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectTax($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectTax($event.target.checked)"
                 :checked="tax"
                 ></ion-checkbox>
         </ion-item>
@@ -130,7 +131,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionShipping')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectShipping($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectShipping($event.target.checked)"
                 :checked="shipping"
                 ></ion-checkbox>
         </ion-item>
@@ -147,7 +148,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionOtherCharge')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectOtherCharge($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectOtherCharge($event.target.checked)"
                 :checked="otherCharge"
                 ></ion-checkbox>
         </ion-item>
@@ -164,7 +165,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionUser')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectUser($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectUser($event.target.checked)"
                 :checked="user"
                 ></ion-checkbox>
         </ion-item>
@@ -181,7 +182,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionRole')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectRole($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectRole($event.target.checked)"
                 :checked="role"
                 ></ion-checkbox>
         </ion-item>
@@ -199,7 +200,7 @@
 
         <ion-item>
             <p>{{$t('backoffice.form.permissionsGroup.permissionOrder')}}</p>
-            <ion-checkbox slot="end" @ionChange="selectDeselectOrder($event.target.checked)"
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectOrder($event.target.checked)"
                 :checked="order"
             ></ion-checkbox>
         </ion-item>
@@ -238,56 +239,67 @@ export default {
       description: '',
 
       menuPermissions: [
+        { id: 'canViewMenu', val: this.$t('backoffice.form.permissionsGroup.canViewMenu'), isChecked: false },
         { id: 'canCreateMenu', val: this.$t('backoffice.form.permissionsGroup.canCreateMenu'), isChecked: false },
         { id: 'canEditMenu', val: this.$t('backoffice.form.permissionsGroup.canEditMenu'), isChecked: false },
         { id: 'canDeleteMenu', val: this.$t('backoffice.form.permissionsGroup.canDeleteMenu'), isChecked: false },
       ],
       categoryPermissions: [
+        { id: 'canViewCategory', val: this.$t('backoffice.form.permissionsGroup.canViewCategory'), isChecked: false },
         { id: 'canCreateCategory', val: this.$t('backoffice.form.permissionsGroup.canCreateCategory'), isChecked: false },
         { id: 'canEditCategory', val: this.$t('backoffice.form.permissionsGroup.canEditCategory'), isChecked: false },
         { id: 'canDeleteCategory', val: this.$t('backoffice.form.permissionsGroup.canDeleteCategory'), isChecked: false },
       ],
       productPermissions: [
+        { id: 'canViewProduct', val: this.$t('backoffice.form.permissionsGroup.canViewProduct'), isChecked: false },
         { id: 'canCreateProduct', val: this.$t('backoffice.form.permissionsGroup.canCreateProduct'), isChecked: false },
         { id: 'canEditProduct', val: this.$t('backoffice.form.permissionsGroup.canEditProduct'), isChecked: false },
         { id: 'canDeleteProduct', val: this.$t('backoffice.form.permissionsGroup.canDeleteProduct'), isChecked: false },
       ],
       customerPermissions: [
+        { id: 'canViewCustomer', val: this.$t('backoffice.form.permissionsGroup.canViewCustomer'), isChecked: false },
         { id: 'canCreateCustomer', val: this.$t('backoffice.form.permissionsGroup.canCreateCustomer'), isChecked: false },
         { id: 'canEditCustomer', val: this.$t('backoffice.form.permissionsGroup.canEditCustomer'), isChecked: false },
         { id: 'canDeleteCustomer', val: this.$t('backoffice.form.permissionsGroup.canDeleteCustomer'), isChecked: false },
       ],
       tablePermissions: [
+        { id: 'canViewTable', val: this.$t('backoffice.form.permissionsGroup.canViewTable'), isChecked: false },
         { id: 'canCreateTable', val: this.$t('backoffice.form.permissionsGroup.canCreateTable'), isChecked: false },
         { id: 'canEditTable', val: this.$t('backoffice.form.permissionsGroup.canEditTable'), isChecked: false },
         { id: 'canDeleteTable', val: this.$t('backoffice.form.permissionsGroup.canDeleteTable'), isChecked: false },
       ],
       taxPermissions: [
+        { id: 'canViewTax', val: this.$t('backoffice.form.permissionsGroup.canViewTax'), isChecked: false },
         { id: 'canCreateTax', val: this.$t('backoffice.form.permissionsGroup.canCreateTax'), isChecked: false },
         { id: 'canEditTax', val: this.$t('backoffice.form.permissionsGroup.canEditTax'), isChecked: false },
         { id: 'canDeleteTax', val: this.$t('backoffice.form.permissionsGroup.canDeleteTax'), isChecked: false },
       ],
       shippingPermissions: [
+        { id: 'canViewShipping', val: this.$t('backoffice.form.permissionsGroup.canViewShipping'), isChecked: false },  
         { id: 'canCreateShipping', val: this.$t('backoffice.form.permissionsGroup.canCreateShipping'), isChecked: false },
         { id: 'canEditShipping', val: this.$t('backoffice.form.permissionsGroup.canEditShipping'), isChecked: false },
         { id: 'canDeleteShipping', val: this.$t('backoffice.form.permissionsGroup.canDeleteShipping'), isChecked: false },
       ],
       otherChargePermissions: [
+        { id: 'canViewOtherCharge', val: this.$t('backoffice.form.permissionsGroup.canViewOtherCharge'), isChecked: false }, 
         { id: 'canCreateOtherCharge', val: this.$t('backoffice.form.permissionsGroup.canCreateOtherCharge'), isChecked: false },
         { id: 'canEditOtherCharge', val: this.$t('backoffice.form.permissionsGroup.canEditOtherCharge'), isChecked: false },
         { id: 'canDeleteOtherCharge', val: this.$t('backoffice.form.permissionsGroup.canDeleteOtherCharge'), isChecked: false },
       ],
       userPermissions: [
+        { id: 'canViewUser', val: this.$t('backoffice.form.permissionsGroup.canViewUser'), isChecked: false },
         { id: 'canCreateUser', val: this.$t('backoffice.form.permissionsGroup.canCreateUser'), isChecked: false },
         { id: 'canEditUser', val: this.$t('backoffice.form.permissionsGroup.canEditUser'), isChecked: false },
         { id: 'canDeleteUser', val: this.$t('backoffice.form.permissionsGroup.canDeleteUser'), isChecked: false },
       ],
       rolePermissions: [
+        { id: 'canViewRole', val: this.$t('backoffice.form.permissionsGroup.canViewRole'), isChecked: false },
         { id: 'canCreateRole', val: this.$t('backoffice.form.permissionsGroup.canCreateRole'), isChecked: false },
         { id: 'canEditRole', val: this.$t('backoffice.form.permissionsGroup.canEditRole'), isChecked: false },
         { id: 'canDeleteRole', val: this.$t('backoffice.form.permissionsGroup.canDeleteRole'), isChecked: false },
       ],
       orderPermissions: [
+        { id: 'canViewOrder', val: this.$t('backoffice.form.permissionsGroup.canViewOrder'), isChecked: false },  
         { id: 'canEditOrder', val: this.$t('backoffice.form.permissionsGroup.canEditOrder'), isChecked: false },
       ],
 
@@ -303,47 +315,58 @@ export default {
                this.name = response.data.Name;
                this.description = response.data.Description;
 
-               this.menuPermissions[0].isChecked = response.data.canCreateMenu;
-               this.menuPermissions[1].isChecked = response.data.canEditMenu;
-               this.menuPermissions[2].isChecked = response.data.canDeleteMenu;
+               this.menuPermissions[0].isChecked = response.data.canViewMenu;
+               this.menuPermissions[1].isChecked = response.data.canCreateMenu;
+               this.menuPermissions[2].isChecked = response.data.canEditMenu;
+               this.menuPermissions[3].isChecked = response.data.canDeleteMenu;
 
-               this.categoryPermissions[0].isChecked = response.data.canCreateCategory;
-               this.categoryPermissions[1].isChecked = response.data.canEditCategory;
-               this.categoryPermissions[2].isChecked = response.data.canDeleteCategory;
+               this.categoryPermissions[0].isChecked = response.data.canViewCategory;
+               this.categoryPermissions[1].isChecked = response.data.canCreateCategory;
+               this.categoryPermissions[2].isChecked = response.data.canEditCategory;
+               this.categoryPermissions[3].isChecked = response.data.canDeleteCategory;
 
-               this.productPermissions[0].isChecked = response.data.canCreateProduct;
-               this.productPermissions[1].isChecked = response.data.canEditProduct;
-               this.productPermissions[2].isChecked = response.data.canDeleteProduct;
+               this.productPermissions[0].isChecked = response.data.canViewProduct;
+               this.productPermissions[1].isChecked = response.data.canCreateProduct;
+               this.productPermissions[2].isChecked = response.data.canEditProduct;
+               this.productPermissions[3].isChecked = response.data.canDeleteProduct;
 
-               this.customerPermissions[0].isChecked = response.data.canCreateCustomer;
-               this.customerPermissions[1].isChecked = response.data.canEditCustomer;
-               this.customerPermissions[2].isChecked = response.data.canDeleteCustomer;
+               this.customerPermissions[0].isChecked = response.data.canViewCustomer;
+               this.customerPermissions[1].isChecked = response.data.canCreateCustomer;
+               this.customerPermissions[2].isChecked = response.data.canEditCustomer;
+               this.customerPermissions[3].isChecked = response.data.canDeleteCustomer;
                
-               this.tablePermissions[0].isChecked = response.data.canCreateTable;
-               this.tablePermissions[1].isChecked = response.data.canEditTable;
-               this.tablePermissions[2].isChecked = response.data.canDeleteTable;
+               this.tablePermissions[0].isChecked = response.data.canViewTable;
+               this.tablePermissions[1].isChecked = response.data.canCreateTable;
+               this.tablePermissions[2].isChecked = response.data.canEditTable;
+               this.tablePermissions[3].isChecked = response.data.canDeleteTable;
                
-               this.taxPermissions[0].isChecked = response.data.canCreateTax;
-               this.taxPermissions[1].isChecked = response.data.canEditTax;
-               this.taxPermissions[2].isChecked = response.data.canDeleteTax;
+               this.taxPermissions[0].isChecked = response.data.canViewTax;
+               this.taxPermissions[1].isChecked = response.data.canCreateTax;
+               this.taxPermissions[2].isChecked = response.data.canEditTax;
+               this.taxPermissions[3].isChecked = response.data.canDeleteTax;
                
-               this.shippingPermissions[0].isChecked = response.data.canCreateShipping;
-               this.shippingPermissions[1].isChecked = response.data.canEditShipping;
-               this.shippingPermissions[2].isChecked = response.data.canDeleteShipping;
+               this.shippingPermissions[0].isChecked = response.data.canViewShipping;
+               this.shippingPermissions[1].isChecked = response.data.canCreateShipping;
+               this.shippingPermissions[2].isChecked = response.data.canEditShipping;
+               this.shippingPermissions[3].isChecked = response.data.canDeleteShipping;
                
-               this.otherChargePermissions[0].isChecked = response.data.canCreateOtherCharge;
-               this.otherChargePermissions[1].isChecked = response.data.canEditOtherCharge;
-               this.otherChargePermissions[2].isChecked = response.data.canDeleteOtherCharge;
+               this.otherChargePermissions[0].isChecked = response.data.canViewOtherCharge;
+               this.otherChargePermissions[1].isChecked = response.data.canCreateOtherCharge;
+               this.otherChargePermissions[2].isChecked = response.data.canEditOtherCharge;
+               this.otherChargePermissions[3].isChecked = response.data.canDeleteOtherCharge;
 
-               this.userPermissions[0].isChecked = response.data.canCreateUser;
-               this.userPermissions[1].isChecked = response.data.canEditUser;
-               this.userPermissions[2].isChecked = response.data.canDeleteUser;
+               this.userPermissions[0].isChecked = response.data.canViewUser;
+               this.userPermissions[1].isChecked = response.data.canCreateUser;
+               this.userPermissions[2].isChecked = response.data.canEditUser;
+               this.userPermissions[3].isChecked = response.data.canDeleteUser;
 
-               this.rolePermissions[0].isChecked = response.data.canCreateRole;
-               this.rolePermissions[1].isChecked = response.data.canEditRole;
-               this.rolePermissions[2].isChecked = response.data.canDeleteRole;
+               this.rolePermissions[0].isChecked = response.data.canViewRole;
+               this.rolePermissions[1].isChecked = response.data.canCreateRole;
+               this.rolePermissions[2].isChecked = response.data.canEditRole;
+               this.rolePermissions[3].isChecked = response.data.canDeleteRole;
 
-               this.orderPermissions[0].isChecked = response.data.canEditOrder;
+               this.orderPermissions[0].isChecked = response.data.canViewOrder;
+               this.orderPermissions[1].isChecked = response.data.canEditOrder;
 
             //    this.file = response.data.ImageUrl;
                 console.log(response.data);
@@ -431,6 +454,14 @@ export default {
             }
             return true;
         },
+        role(){
+            for (let index = 0; index < this.rolePermissions.length; index++) {
+                if (!this.rolePermissions[index].isChecked){
+                    return false
+                }
+            }
+            return true;
+        },
         order(){
             for (let index = 0; index < this.orderPermissions.length; index++) {
                 if (!this.orderPermissions[index].isChecked){
@@ -438,6 +469,13 @@ export default {
                 }
             }
             return true;
+        },
+        all(){
+            if (this.order && this.category && this.product && this.customer && this.table 
+                    && this.tax && this.shipping && this.otherCharge && this.user && this.role)
+                    return true;
+            else
+                return false;
         },
   },
   methods: {
@@ -606,37 +644,48 @@ export default {
             let item = {
                 "Name": this.name,
                 "Description": this.description,
-                "canCreateMenu": this.menuPermissions[0].isChecked,
-                "canEditMenu": this.menuPermissions[1].isChecked,
-                "canDeleteMenu": this.menuPermissions[2].isChecked,
-                "canCreateCategory": this.categoryPermissions[0].isChecked,
-                "canEditCategory": this.categoryPermissions[1].isChecked,
-                "canDeleteCategory": this.categoryPermissions[2].isChecked,
-                "canCreateProduct": this.productPermissions[0].isChecked,
-                "canEditProduct": this.productPermissions[1].isChecked,
-                "canDeleteProduct": this.productPermissions[2].isChecked,
-                "canCreateCustomer": this.customerPermissions[0].isChecked,
-                "canEditCustomer": this.customerPermissions[1].isChecked,
-                "canDeleteCustomer": this.customerPermissions[2].isChecked,
-                "canCreateTable": this.tablePermissions[0].isChecked,
-                "canEditTable": this.tablePermissions[1].isChecked,
-                "canDeleteTable": this.tablePermissions[2].isChecked,
-                "canCreateTax": this.taxPermissions[0].isChecked,
-                "canEditTax": this.taxPermissions[1].isChecked,
-                "canDeleteTax": this.taxPermissions[2].isChecked,
-                "canCreateShipping": this.shippingPermissions[0].isChecked,
-                "canEditShipping": this.shippingPermissions[1].isChecked,
-                "canDeleteShipping": this.shippingPermissions[2].isChecked,
-                "canCreateOtherCharge": this.otherChargePermissions[0].isChecked,
-                "canEditOtherCharge": this.otherChargePermissions[1].isChecked,
-                "canDeleteOtherCharge": this.otherChargePermissions[2].isChecked,
-                "canCreateUser": this.userPermissions[0].isChecked,
-                "canEditUser": this.userPermissions[1].isChecked,
-                "canDeleteUser": this.userPermissions[2].isChecked,
-                "canCreateRole": this.rolePermissions[0].isChecked,
-                "canEditRole": this.rolePermissions[1].isChecked,
-                "canDeleteRole": this.rolePermissions[2].isChecked,
-                "canEditOrder": this.orderPermissions[0].isChecked,
+                "canViewMenu": this.menuPermissions[0].isChecked,
+                "canCreateMenu": this.menuPermissions[1].isChecked,
+                "canEditMenu": this.menuPermissions[2].isChecked,
+                "canDeleteMenu": this.menuPermissions[3].isChecked,
+                "canViewCategory": this.categoryPermissions[0].isChecked,
+                "canCreateCategory": this.categoryPermissions[1].isChecked,
+                "canEditCategory": this.categoryPermissions[2].isChecked,
+                "canDeleteCategory": this.categoryPermissions[3].isChecked,
+                "canViewProduct": this.productPermissions[0].isChecked,
+                "canCreateProduct": this.productPermissions[1].isChecked,
+                "canEditProduct": this.productPermissions[2].isChecked,
+                "canDeleteProduct": this.productPermissions[3].isChecked,
+                "canViewCustomer": this.customerPermissions[0].isChecked,
+                "canCreateCustomer": this.customerPermissions[1].isChecked,
+                "canEditCustomer": this.customerPermissions[2].isChecked,
+                "canDeleteCustomer": this.customerPermissions[3].isChecked,
+                "canViewTable": this.tablePermissions[0].isChecked,
+                "canCreateTable": this.tablePermissions[1].isChecked,
+                "canEditTable": this.tablePermissions[2].isChecked,
+                "canDeleteTable": this.tablePermissions[3].isChecked,
+                "canViewTax": this.taxPermissions[0].isChecked,
+                "canCreateTax": this.taxPermissions[1].isChecked,
+                "canEditTax": this.taxPermissions[2].isChecked,
+                "canDeleteTax": this.taxPermissions[3].isChecked,
+                "canViewShipping": this.shippingPermissions[0].isChecked,
+                "canCreateShipping": this.shippingPermissions[1].isChecked,
+                "canEditShipping": this.shippingPermissions[2].isChecked,
+                "canDeleteShipping": this.shippingPermissions[3].isChecked,
+                "canViewOtherCharge": this.otherChargePermissions[0].isChecked,
+                "canCreateOtherCharge": this.otherChargePermissions[1].isChecked,
+                "canEditOtherCharge": this.otherChargePermissions[2].isChecked,
+                "canDeleteOtherCharge": this.otherChargePermissions[3].isChecked,
+                "canViewUser": this.userPermissions[0].isChecked,
+                "canCreateUser": this.userPermissions[1].isChecked,
+                "canEditUser": this.userPermissions[2].isChecked,
+                "canDeleteUser": this.userPermissions[3].isChecked,
+                "canViewRole": this.rolePermissions[0].isChecked,
+                "canCreateRole": this.rolePermissions[1].isChecked,
+                "canEditRole": this.rolePermissions[2].isChecked,
+                "canDeleteRole": this.rolePermissions[3].isChecked,
+                "canViewOrder": this.orderPermissions[0].isChecked,
+                "canEditOrder": this.orderPermissions[1].isChecked,
             }
             //If I am editing
             if (this.id){

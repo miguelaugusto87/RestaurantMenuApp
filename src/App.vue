@@ -46,18 +46,18 @@
            <!-- <ion-item v-if="!getAuthenticated" @click="closeEnd"><router-link to="/login" >{{ $t('backoffice.options.login') }}</router-link></ion-item> -->
            <ion-item v-else @click="logOut"><router-link to="/login" >{{ $t('backoffice.options.logout') }}</router-link></ion-item>
 
-           <ion-item v-if="getAuthenticated"><router-link to="/controlPanel" >{{ $t('backoffice.options.controlPanel') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/menu" >{{ $t('backoffice.options.manageMenus') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/order" >{{ $t('backoffice.options.viewOrders') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/category" >{{ $t('backoffice.options.manageCategories') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/product" >{{ $t('backoffice.options.manageProducts') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/customer" >{{ $t('backoffice.options.manageCustomers') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/table" >{{ $t('backoffice.options.manageTables') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/tax" >{{ $t('backoffice.options.manageTaxes') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/shipping" >{{ $t('backoffice.options.manageShippings') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
-           <ion-item v-if="getAuthenticated"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
+           <ion-item v-if="accessToControlPanel()"><router-link to="/controlPanel" >{{ $t('backoffice.options.controlPanel') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewMenu')"><router-link to="/menu" >{{ $t('backoffice.options.manageMenus') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewOrder')"><router-link to="/order" >{{ $t('backoffice.options.viewOrders') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewCategory')"><router-link to="/category" >{{ $t('backoffice.options.manageCategories') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewProduct')"><router-link to="/product" >{{ $t('backoffice.options.manageProducts') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewCustomer')"><router-link to="/customer" >{{ $t('backoffice.options.manageCustomers') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewTable')"><router-link to="/table" >{{ $t('backoffice.options.manageTables') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewTax')"><router-link to="/tax" >{{ $t('backoffice.options.manageTaxes') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewShipping')"><router-link to="/shipping" >{{ $t('backoffice.options.manageShippings') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewOtherCharge')"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewUser')"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewRole')"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
         </ion-content>
       </ion-menu>
 
@@ -172,7 +172,8 @@ import { Api } from './backoffice/api/api.js';
 import orderType from './frontend/components/selectOrderType'
 import { EventBus } from './frontend/event-bus';
 import { VBreakpoint } from 'vue-breakpoint-component'
- import { QrcodeStream } from 'vue-qrcode-reader'
+import { QrcodeStream } from 'vue-qrcode-reader'
+import ProductDetail from './frontend/components/ProductDetail'
 
 
 export default {
@@ -181,6 +182,13 @@ export default {
     msg: String
   },
   mounted: function(){
+
+    if (this.$route.query.share)
+   {
+    console.log('share');
+    this.productDetail(this.$route.query.share)
+   }
+
   EventBus.$on('updateCart', (value) => {
       this.cart = value;     
     });
@@ -295,7 +303,67 @@ export default {
   watch: {
     
   },
-  methods: {      
+  methods: {    
+    
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canViewMenu':
+                          res = roles[index].canViewMenu;
+                          break;
+                      case 'canViewCategory':
+                          res = roles[index].canViewCategory;
+                          break;
+                      case 'canViewProduct':
+                          res = roles[index].canViewProduct;
+                          break;
+                      case 'canViewCustomer':
+                          res = roles[index].canViewCustomer;
+                          break;
+                      case 'canViewTable':
+                          res = roles[index].canViewTable;
+                          break;
+                      case 'canViewTax':
+                          res = roles[index].canViewTax;
+                          break;
+                      case 'canViewShipping':
+                          res = roles[index].canViewShipping;
+                          break;
+                      case 'canViewOtherCharge':
+                          res = roles[index].canViewOtherCharge;
+                          break;
+                      case 'canViewUser':
+                          res = roles[index].canViewUser;
+                          break;
+                      case 'canViewRole':
+                          res = roles[index].canViewRole;
+                          break;
+                      case 'canViewOrder':
+                          res = roles[index].canViewOrder;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
+
+    accessToControlPanel(){
+        return (this.hasPermission('canViewMenu') || this.hasPermission('canViewOrder') || this.hasPermission('canViewCategory')
+              || this.hasPermission('canViewProduct') || this.hasPermission('canViewCustomer') || this.hasPermission('canViewTable')
+                || this.hasPermission('canViewTax') || this.hasPermission('canViewShipping') || this.hasPermission('canViewOtherCharge')
+                  || this.hasPermission('canViewUser') || this.hasPermission('canViewRole'))
+    },
 
     openStart () {
         document.querySelector('ion-menu-controller').open('start')     
@@ -351,7 +419,10 @@ export default {
 
     logOut: function(){
       this.$store.commit("setAuthentication", false);
-      this.$router.push({path: '/' })      
+      this.$store.commit("setUser", null);
+      this.$store.commit("setRoles", []);
+
+      this.$router.push({path: '/' })   
     },
     
     clientUpdateHisData: function(){
@@ -569,7 +640,7 @@ export default {
                   
     },
 
-     notValidQr(){
+    notValidQr(){
       return  this.$ionic.alertController
       .create({
           cssClass: 'my-custom-class',
@@ -587,7 +658,50 @@ export default {
       .then(a => a.present())
                   
     },
+  
+    productDetail: function(productId){
 
+      this.spinner = true
+      Api.fetchById("Product", productId).then(response => {  
+
+        this.spinner = false;
+        console.log(response)
+        if(response.status === 200){
+          var Name= response.data.Name;
+          var SalePrice = response.data.SalePrice; 
+          var Description =response.data.Description;
+          var ImageUrl  =response.data.ImageUrl;  
+
+          console.log(response.SalePrice)
+          
+            return this.$ionic.modalController
+              .create({
+                component: ProductDetail,
+                cssClass: 'my-custom-class',
+                componentProps: {
+                  data: {
+                    content: 'New Content',
+                  },
+                  propsData: {
+                    title: this.$t('frontend.product.productDetail'),
+                    Name: Name,
+                    SalePrice: SalePrice,
+                    Description: Description,
+                    ImageUrl: ImageUrl,
+                  },
+                },
+              })
+              .then(m => m.present())              
+        }      
+        
+      })
+      .catch(e => {
+        console.log(e)
+        this.spinner = false
+        
+      });
+
+    }
    
   
   },

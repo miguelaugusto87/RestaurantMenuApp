@@ -2,7 +2,7 @@
   <ion-content id="customer" class="customer">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/table-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.table')}}</ion-button></router-link>
+    <router-link to="/table-form"><ion-button v-if="hasPermission('canCreateTable')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.table')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="table in tables" v-bind:key="table._id">
@@ -17,10 +17,10 @@
             </ion-label>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editTable(table._id)">
+            <ion-item-option v-if="hasPermission('canEditTable')" color="primary" @click="editTable(table._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteTable(table._id)">
+            <ion-item-option v-if="hasPermission('canDeleteTable')" color="danger" @click="deleteTable(table._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
             <ion-item-option color="success" >
@@ -50,6 +50,34 @@ export default {
     }
   }, 
   methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateTable':
+                          res = roles[index].canCreateTable;
+                          break;
+                      case 'canEditTable':
+                          res = roles[index].canEditTable;
+                          break;
+                      case 'canDeleteTable':
+                          res = roles[index].canDeleteTable;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

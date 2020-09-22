@@ -2,7 +2,7 @@
   <ion-content id="shipping" class="shipping">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/shipping-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.shipping')}}</ion-button></router-link>
+    <router-link to="/shipping-form"><ion-button v-if="hasPermission('canCreateShipping')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.shipping')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="shipping in shippings" v-bind:key="shipping._id">
@@ -11,8 +11,10 @@
                 <h2>{{ shipping.Name }}</h2>
                 <h3>{{$t('backoffice.form.fields.price')}}: {{ shipping.Price }}</h3>
             </ion-label>
-            <ion-checkbox v-if="shipping.Available" checked="true" slot="end" @click="availableShipping(shipping, false)"></ion-checkbox>
-            <ion-checkbox v-else checked="false" slot="end" @click="availableShipping(shipping, true)"></ion-checkbox>
+            <div v-if="hasPermission('canEditShipping')">
+                <ion-checkbox v-if="shipping.Available" checked="true" slot="end" @click="availableShipping(shipping, false)"></ion-checkbox>
+                <ion-checkbox v-else checked="false" slot="end" @click="availableShipping(shipping, true)"></ion-checkbox>
+            </div>
             <!-- <ion-label>
                 <ion-checkbox v-if="tax.Available" disabled="true" checked="true"></ion-checkbox>
                 <ion-checkbox v-else disabled="true" checked="false"></ion-checkbox>
@@ -20,10 +22,10 @@
           </ion-item>
           
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editShipping(shipping._id)">
+            <ion-item-option v-if="hasPermission('canEditShipping')" color="primary" @click="editShipping(shipping._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteShipping(shipping._id)">
+            <ion-item-option v-if="hasPermission('canDeleteShipping')" color="danger" @click="deleteShipping(shipping._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -50,6 +52,34 @@ export default {
     }
   }, 
   methods: {
+        hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateShipping':
+                          res = roles[index].canCreateShipping;
+                          break;
+                      case 'canEditShipping':
+                          res = roles[index].canEditShipping;
+                          break;
+                      case 'canDeleteShipping':
+                          res = roles[index].canDeleteShipping;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
      ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

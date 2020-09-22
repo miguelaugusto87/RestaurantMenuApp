@@ -22,6 +22,7 @@ import { hammer } from "ionicons/icons";
 import { list } from "ionicons/icons";
 import { arrowRoundBack } from "ionicons/icons";
 import { eye } from "ionicons/icons";
+import { share } from "ionicons/icons";
 
 // import AppMenu from './Menu';
 addIcons({
@@ -43,6 +44,8 @@ addIcons({
   "ios-arrow-round-back": arrowRoundBack.ios,
   "md-eye": eye.md,
   "ios-eye": eye.ios,
+  "md-share": share.md,
+  "ios-share": share.ios,
 });
 
 Vue.use(Ionic);
@@ -51,12 +54,22 @@ Vue.use(VModal)
 
 const store = new Vuex.Store({
   state: {
-    authenticated: false
+    authenticated: false,
+    user: null,
+    roles: [],
   },
   mutations: {
     setAuthentication(state, status) {
       state.authenticated = status;
       console.log(state.authenticated);
+    },
+    setUser(state, userl){
+      state.user = userl;
+      console.log(state.user);
+    },
+    setRoles(state, roles){
+      state.roles = roles;
+      console.log(state.roles);
     },
   }
 });

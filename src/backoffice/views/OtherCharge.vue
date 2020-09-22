@@ -2,7 +2,7 @@
     <ion-content id="otherCharge" class="otherCharge">
 
         <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-        <router-link to="/otherCharge-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.otherCharge')}}</ion-button></router-link>
+        <router-link to="/otherCharge-form"><ion-button v-if="hasPermission('canCreateOtherCharge')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.otherCharge')}}</ion-button></router-link>
 
         <ion-list>
             <ion-item-sliding v-for="otherCharge in otherCharges" v-bind:key="otherCharge._id">
@@ -15,10 +15,10 @@
                     <ion-checkbox v-else checked="false" slot="end" @click="availableOtherCharge(otherCharge, true)"></ion-checkbox>
                 </ion-item>
                 <ion-item-options side="end">
-                    <ion-item-option color="primary" @click="editOtherCharge(otherCharge._id)">
+                    <ion-item-option v-if="hasPermission('canEditOtherCharge')" color="primary" @click="editOtherCharge(otherCharge._id)">
                         <ion-icon slot="icon-only" name="create"></ion-icon>
                     </ion-item-option>
-                    <ion-item-option color="danger" @click="deleteOtherCharge(otherCharge._id)">
+                    <ion-item-option v-if="hasPermission('canDeleteOtherCharge')" color="danger" @click="deleteOtherCharge(otherCharge._id)">
                         <ion-icon slot="icon-only" name="trash"></ion-icon>
                     </ion-item-option>
                 </ion-item-options>
@@ -52,6 +52,34 @@ export default {
     }
   },
    methods: {
+      hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateOtherCharge':
+                          res = roles[index].canCreateOtherCharge;
+                          break;
+                      case 'canEditOtherCharge':
+                          res = roles[index].canEditOtherCharge;
+                          break;
+                      case 'canDeleteOtherCharge':
+                          res = roles[index].canDeleteOtherCharge;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

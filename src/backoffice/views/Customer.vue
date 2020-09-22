@@ -2,7 +2,7 @@
   <ion-content id="customer" class="customer">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/customer-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.customer')}}</ion-button></router-link>
+    <router-link to="/customer-form"><ion-button v-if="hasPermission('canCreateCustomer')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.customer')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="customer in customers" v-bind:key="customer._id">
@@ -16,10 +16,10 @@
             </ion-label>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editCustomer(customer._id)">
+            <ion-item-option v-if="hasPermission('canEditCustomer')" color="primary" @click="editCustomer(customer._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteCustomer(customer._id)">
+            <ion-item-option v-if="hasPermission('canDeleteCustomer')" color="danger" @click="deleteCustomer(customer._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -46,6 +46,34 @@ export default {
     }
   }, 
   methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateCustomer':
+                          res = roles[index].canCreateCustomer;
+                          break;
+                      case 'canEditCustomer':
+                          res = roles[index].canEditCustomer;
+                          break;
+                      case 'canDeleteCustomer':
+                          res = roles[index].canDeleteCustomer;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

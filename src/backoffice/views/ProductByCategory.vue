@@ -14,17 +14,18 @@
                         <h2>{{ product.Name }}</h2>
                         <!-- <h3>{{ product.BarCode }}</h3> -->
                     </ion-label>
-                          
-                    <ion-checkbox v-if="product.Available" checked="true" slot="end" @click="availableProduct(product, false)"></ion-checkbox>
-                    <ion-checkbox v-else checked="false" slot="end" @click="availableProduct(product, true)"></ion-checkbox>
-           
+
+                    <div v-if="hasPermission('canEditProduct')">      
+                        <ion-checkbox v-if="product.Available" checked="true" slot="end" @click="availableProduct(product, false)"></ion-checkbox>
+                        <ion-checkbox v-else checked="false" slot="end" @click="availableProduct(product, true)"></ion-checkbox>
+                    </div>
                 </ion-item>
 
                 <ion-item-options side="end">
-                    <ion-item-option color="primary" @click="editProduct(product._id)">
+                    <ion-item-option v-if="hasPermission('canEditProduct')" color="primary" @click="editProduct(product._id)">
                         <ion-icon slot="icon-only" name="create"></ion-icon>
                     </ion-item-option>
-                    <ion-item-option color="danger" @click="deleteProduct(product._id)">
+                    <ion-item-option v-if="hasPermission('canDeleteProduct')" color="danger" @click="deleteProduct(product._id)">
                         <ion-icon slot="icon-only" name="trash"></ion-icon>
                     </ion-item-option>
                 </ion-item-options>
@@ -68,6 +69,31 @@ export default {
     }
   },
    methods: {
+           hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canEditProduct':
+                          res = roles[index].canEditProduct;
+                          break;
+                      case 'canDeleteProduct':
+                          res = roles[index].canDeleteProduct;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

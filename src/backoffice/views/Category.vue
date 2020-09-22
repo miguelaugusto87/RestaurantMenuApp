@@ -2,7 +2,7 @@
   <ion-content id="category" class="category">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/category-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.category')}}</ion-button></router-link>
+    <router-link to="/category-form"><ion-button v-if="hasPermission('canCreateCategory')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.category')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="category in categories" v-bind:key="category._id">
@@ -16,10 +16,10 @@
             </ion-label>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editCategory(category._id)">
+            <ion-item-option v-if="hasPermission('canEditCategory')" color="primary" @click="editCategory(category._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteCategory(category._id)">
+            <ion-item-option v-if="hasPermission('canDeleteCategory')" color="danger" @click="deleteCategory(category._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -46,6 +46,34 @@ export default {
     }
   }, 
   methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateCategory':
+                          res = roles[index].canCreateCategory;
+                          break;
+                      case 'canEditCategory':
+                          res = roles[index].canEditCategory;
+                          break;
+                      case 'canDeleteCategory':
+                          res = roles[index].canDeleteCategory;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
      ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

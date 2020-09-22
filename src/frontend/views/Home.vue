@@ -136,6 +136,11 @@ export default {
    {
      this.cart = this.$route.params.cart;
    }
+
+  if (this.$route.params.share)
+   {
+    alert(this.$route.params.share)
+   }
   
     if (this.$route.params.clientId) {
      this.clientId = this.$route.params.clientId;

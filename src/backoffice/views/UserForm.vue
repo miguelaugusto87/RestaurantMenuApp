@@ -22,6 +22,20 @@
           v-bind:value="password">
           </ion-input>
         </ion-item>
+
+        <ion-item>
+            <p>{{$t('backoffice.form.fields.roles')}}</p>
+        </ion-item>
+        <ion-list>
+            <ion-item v-for="rol in allRoles" v-bind:key="rol._id">
+            <ion-label>{{rol.Name}}</ion-label>
+            <ion-checkbox
+                slot="end"
+                @ionChange="addDeleteRole($event.target.checked, rol._id)"
+                :checked="hasUserRole(rol._id)">
+            </ion-checkbox>
+            </ion-item>
+        </ion-list>
         <!-- <ion-item>
           <ion-card v-if="checkImage()" >
               <ion-thumbnail slot="start">
@@ -55,11 +69,14 @@ export default {
       id: null,
       email: '',
       password: '',
+      allRoles: [],
+      userRoles: [],
     //   file: null,
     }
   },
   created: function(){
-    
+
+    this.fetchRoles();
     this.id = this.$route.params.userId;
     if (this.id){
       this.title = 'Edit user';
@@ -67,6 +84,7 @@ export default {
             .then(response => {
                this.email = response.data.Email;
                this.password = response.data.Password;
+               this.userRoles = response.data.Roles;
             //    this.file = response.data.ImageUrl;
                return response;
             })
@@ -94,6 +112,27 @@ export default {
             buttons: [this.$t('backoffice.form.messages.buttons.ok')],
           })
         .then(a => a.present())
+    },
+    fetchRoles: function(){
+        Api.fetchAll('Rol').then(response => {
+          // console.log(response.data)
+          this.allRoles = response.data
+        })
+        .catch(e => {
+          console.log(e)
+        });
+    },
+    addDeleteRole(isChecked, rol_id){
+        if (isChecked){
+            if (!this.userRoles.includes(rol_id))
+                this.userRoles.push(rol_id)
+        }
+        else
+          this.userRoles.splice(this.userRoles.indexOf(rol_id), 1)
+        console.log(this.userRoles)
+    },
+    hasUserRole(rol_id){
+      return this.userRoles.includes(rol_id);
     },
     isValidForm(){
         let errors = [];
@@ -160,6 +199,7 @@ export default {
             let item = {
               "Email": this.email,
               "Password": this.password,
+              "Roles": this.userRoles,
             //   "ImageUrl": "",
             }
             // if (this.file != null)
@@ -177,6 +217,7 @@ export default {
                                 this.$t('backoffice.list.messages.titleEditUser'));
                         this.email = '';
                         this.password = '';
+                        this.userRoles = [];
                         // this.file = null;
                         this.$router.push({
                           name: 'User', 
@@ -199,6 +240,7 @@ export default {
                                 this.$t('backoffice.list.messages.titleCreateUser'));
                       this.email = '';
                       this.password = '';
+                      this.userRoles = [];
                     //   this.file = null;
                       this.$router.push({
                         name: 'User', 

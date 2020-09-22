@@ -2,7 +2,7 @@
     <ion-content id="product" class="product">
 
         <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-        <router-link to="/product-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.product')}}</ion-button></router-link>
+        <router-link to="/product-form"><ion-button v-if="hasPermission('canCreateProduct')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.product')}}</ion-button></router-link>
 
         <ion-list>
             <ion-item-sliding v-for="product in products" v-bind:key="product._id">
@@ -29,11 +29,11 @@
                 </ion-label> 
                 </ion-item>-->
                 <ion-item-options side="end">
-                    <ion-item-option color="primary" @click="editProduct(product._id, product.Name, product.Description,
+                    <ion-item-option v-if="hasPermission('canEditProduct')" color="primary" @click="editProduct(product._id, product.Name, product.Description,
                     product.CostPrice, product.SalePrice, product.CategoryId)">
                         <ion-icon slot="icon-only" name="create"></ion-icon>
                     </ion-item-option>
-                    <ion-item-option color="danger" @click="deleteProduct(product._id)">
+                    <ion-item-option v-if="hasPermission('canDeleteProduct')" color="danger" @click="deleteProduct(product._id)">
                         <ion-icon slot="icon-only" name="trash"></ion-icon>
                     </ion-item-option>
                 </ion-item-options>
@@ -74,6 +74,34 @@ export default {
     }
   },
    methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateProduct':
+                          res = roles[index].canCreateProduct;
+                          break;
+                      case 'canEditProduct':
+                          res = roles[index].canEditProduct;
+                          break;
+                      case 'canDeleteProduct':
+                          res = roles[index].canDeleteProduct;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

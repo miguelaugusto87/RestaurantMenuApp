@@ -2,7 +2,7 @@
   <ion-content id="tax" class="tax">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/tax-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.tax')}}</ion-button></router-link>
+    <router-link to="/tax-form"><ion-button v-if="hasPermission('canCreateTax')"  expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.tax')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="tax in taxes" v-bind:key="tax._id">
@@ -11,8 +11,10 @@
                 <h2>{{ tax.Name }}</h2>
                 <h3>Tax percent: {{ tax.Percent }}%</h3>
             </ion-label>
-            <ion-checkbox v-if="tax.Available" checked="true" slot="end" @click="activeTax(tax, false)"></ion-checkbox>
-            <ion-checkbox v-else checked="false" slot="end" @click="activeTax(tax, true)"></ion-checkbox>
+            <div v-if="hasPermission('canEditTax')">
+                <ion-checkbox v-if="tax.Available" checked="true" slot="end" @click="activeTax(tax, false)"></ion-checkbox>
+                <ion-checkbox v-else checked="false" slot="end" @click="activeTax(tax, true)"></ion-checkbox>
+            </div>
             <!-- <ion-label>
                 <ion-checkbox v-if="tax.Available" disabled="true" checked="true"></ion-checkbox>
                 <ion-checkbox v-else disabled="true" checked="false"></ion-checkbox>
@@ -20,10 +22,10 @@
           </ion-item>
           
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editTax(tax._id)">
+            <ion-item-option v-if="hasPermission('canEditTax')" color="primary" @click="editTax(tax._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteTax(tax._id)">
+            <ion-item-option v-if="hasPermission('canDeleteTax')" color="danger" @click="deleteTax(tax._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -50,6 +52,34 @@ export default {
     }
   }, 
   methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateTax':
+                          res = roles[index].canCreateTax;
+                          break;
+                      case 'canEditTax':
+                          res = roles[index].canEditTax;
+                          break;
+                      case 'canDeleteTax':
+                          res = roles[index].canDeleteTax;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
      ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

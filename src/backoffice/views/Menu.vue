@@ -2,7 +2,7 @@
   <ion-content id="menu" class="menu">
 
     <router-link to="/controlPanel"><ion-button expand="full" color="tertiary"><ion-icon name="hammer"></ion-icon>{{$t('backoffice.list.buttons.goToControlPanel')}}</ion-button></router-link>
-    <router-link to="/menu-form"><ion-button expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.menu')}}</ion-button></router-link>
+    <router-link to="/menu-form"><ion-button v-if="hasPermission('canCreateMenu')" expand="full" color="primary"><ion-icon name="add"></ion-icon>{{$t('backoffice.list.actions.addANew')}} {{$t('backoffice.list.entitiesName.menu')}}</ion-button></router-link>
 
       <ion-list>
         <ion-item-sliding v-for="menu in menus" v-bind:key="menu._id">
@@ -15,10 +15,10 @@
             <ion-checkbox v-else checked="false" slot="end" @click="activeMenu(menu, true)"></ion-checkbox>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="primary" @click="editMenu(menu._id)">
+            <ion-item-option v-if="hasPermission('canEditMenu')" color="primary" @click="editMenu(menu._id)">
                <ion-icon slot="icon-only" name="create"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" @click="deleteMenu(menu._id)">
+            <ion-item-option v-if="hasPermission('canDeleteMenu')" color="danger" @click="deleteMenu(menu._id)">
                <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-item-option>
           </ion-item-options>
@@ -46,6 +46,34 @@ export default {
     }
   }, 
   methods: {
+    hasPermission(permission){
+        
+        let res = false;
+        if (this.$store.state.authenticated)
+        {
+            let roles = this.$store.state.roles;
+            for (let index = 0; index < roles.length; index++) {
+                switch(permission){                        
+                      case 'canCreateMenu':
+                          res = roles[index].canCreateMenu;
+                          break;
+                      case 'canEditMenu':
+                          res = roles[index].canEditMenu;
+                          break;
+                      case 'canDeleteMenu':
+                          res = roles[index].canDeleteMenu;
+                          break;
+                      default:
+                          break;
+                }
+                if (res)
+                { 
+                    return res;
+                }              
+            }
+        }
+        return res;
+    },
     ShowMessage(type, message, topic='') {
         return this.$ionic.alertController
           .create({

@@ -1,7 +1,7 @@
 <template>
     <ion-content id="product" class="product">
 
-        <v-breakpoint v-if="!spinner">
+        <v-breakpoint >
             <div slot-scope="scope">
 
                 <span v-if="scope.isSmall || scope.isMedium || scope.noMatch" > 
@@ -267,7 +267,7 @@ addIcons({
 export default {
     name: 'OrderState', 
     mounted: function(){
-        this.$refs.rangeDualKnobs.value = { lower: 1, upper: 2 };
+       // this.$refs.rangeDualKnobs.value = { lower: 1, upper: 2 };
     },
     created: function(){
     this.CustomerName = this.$route.params.CustomerName;      

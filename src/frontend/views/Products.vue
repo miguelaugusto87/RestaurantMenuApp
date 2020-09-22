@@ -15,38 +15,59 @@
               <span v-if="scope.isSmall || scope.noMatch" > 
 
                 <div  v-for="pr in prod" :key="pr._id" class="menu-col-12 card-category">
-                    <ion-card  >
+                    <ion-card style="padding:12px" >
 
-                      <ion-item>
-                        <img class="menu-col-12" :src="pr.ImageUrl"> 
-                        
-                      </ion-item>
+                     
 
+                      <div >
+                        <img class="menu-col-12" :src="pr.ImageUrl">                         
+                    
+                        <div class="menu-col-12" style="text-align: right;">
+                          <vue-goodshare-facebook 
+                            :page_url= staticUrl+pr._id
+                            :page_title = pr.Name
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-facebook>
+                            <vue-goodshare-whatsapp 
+                            :page_url= staticUrl+pr._id
+                            :page_title= pr.Name 
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-whatsapp>
+                          <vue-goodshare-linked 
+                            :page_url= staticUrl+pr._id
+                            :page_title= pr.Name  
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-linked>
+                          <vue-goodshare-email
+                            :page_url= staticUrl+pr._id
+                            :page_title= pr.Name 
+                            has_icon
+                            ></vue-goodshare-email>
+                          </div>
+                      </div>
                       <ion-card-content>
 
                         <ion-card-header>
                           <ion-card-title style="padding: 0;">{{pr.Name}}</ion-card-title>
                         </ion-card-header>
 
-                        <ion-item>
-                          <ion-input class="menu-col-6"  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        <ion-item >
+                          <ion-input  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        </ion-item>
+
+                        <!-- <ion-item> -->
                           <ion-label class="menu-col-6"   color="danger" style="font-size: 14pt;font-weight: bold;text-align: center;">${{ pr.SalePrice.toFixed(2)}}</ion-label>                   
-                        </ion-item>
+                        <!-- </ion-item> -->
 
-                        <ion-item>
-                          <div class="menu-col-6" style="text-align: right">
-                            <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          </div>
-                          <div class="menu-col-6">
-                            <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
-                          </div>
-
-                        </ion-item>
-
-                        
                       
                       </ion-card-content>
-                
+                        <div class="menu-col-12" style="text-align: right">
+                          <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                        </div>
                   
                   </ion-card>
                 </div>
@@ -56,38 +77,59 @@
               <span v-if="scope.isMedium" > 
 
                   <div  v-for="pr in prod" :key="pr._id" class="menu-col-4 card-category">
-                    <ion-card  >
+                                       <ion-card  >
 
-                      <ion-item>
-                        <img class="menu-col-12" :src="pr.ImageUrl"> 
-                        
-                      </ion-item>
+                     
 
+                      <div >
+                        <img class="menu-col-12" :src="pr.ImageUrl">                         
+                    
+                        <div class="menu-col-12" style="text-align: right;">
+                          <vue-goodshare-facebook 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-facebook>
+                            <vue-goodshare-whatsapp 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-whatsapp>
+                          <vue-goodshare-linked 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title"  
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-linked>
+                          <vue-goodshare-email
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            ></vue-goodshare-email>
+                          </div>
+                      </div>
                       <ion-card-content>
 
                         <ion-card-header>
                           <ion-card-title style="padding: 0;">{{pr.Name}}</ion-card-title>
                         </ion-card-header>
 
-                        <ion-item>
-                          <ion-input class="menu-col-6"  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        <ion-item >
+                          <ion-input  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        </ion-item>
+
+                        <!-- <ion-item> -->
                           <ion-label class="menu-col-6"   color="danger" style="font-size: 14pt;font-weight: bold;text-align: center;">${{ pr.SalePrice.toFixed(2)}}</ion-label>                   
-                        </ion-item>
+                        <!-- </ion-item> -->
 
-                        <ion-item>
-                          <div class="menu-col-6" style="text-align: right">
-                            <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          </div>
-                          <div class="menu-col-6">
-                            <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
-                          </div>
-
-                        </ion-item>
-
-                        
                       
                       </ion-card-content>
-                
+                        <div class="menu-col-12" style="text-align: right">
+                          <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                        </div>
                   
                   </ion-card>
                 </div>
@@ -98,36 +140,57 @@
                 <div  v-for="pr in prod" :key="pr._id" class="menu-col-3 card-category">
                     <ion-card  >
 
-                      <ion-item>
-                        <img class="menu-col-12" :src="pr.ImageUrl"> 
-                        
-                      </ion-item>
+                     
 
+                      <div >
+                        <img class="menu-col-12" :src="pr.ImageUrl">                         
+                    
+                        <div class="menu-col-12" style="text-align: right;">
+                          <vue-goodshare-facebook 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-facebook>
+                            <vue-goodshare-whatsapp 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-whatsapp>
+                          <vue-goodshare-linked 
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title"  
+                            has_icon
+                            title_social=""
+                            ></vue-goodshare-linked>
+                          <vue-goodshare-email
+                            :page_url= staticUrl+pr._id
+                            :page_title="Title" 
+                            has_icon
+                            ></vue-goodshare-email>
+                          </div>
+                      </div>
                       <ion-card-content>
 
                         <ion-card-header>
                           <ion-card-title style="padding: 0;">{{pr.Name}}</ion-card-title>
                         </ion-card-header>
 
-                        <ion-item>
-                          <ion-input class="menu-col-6"  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        <ion-item >
+                          <ion-input  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                        </ion-item>
+
+                        <!-- <ion-item> -->
                           <ion-label class="menu-col-6"   color="danger" style="font-size: 14pt;font-weight: bold;text-align: center;">${{ pr.SalePrice.toFixed(2)}}</ion-label>                   
-                        </ion-item>
+                        <!-- </ion-item> -->
 
-                        <ion-item>
-                          <div class="menu-col-6" style="text-align: right">
-                            <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          </div>
-                          <div class="menu-col-6">
-                            <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
-                          </div>
-
-                        </ion-item>
-
-                        
                       
                       </ion-card-content>
-                
+                        <div class="menu-col-12" style="text-align: right">
+                          <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                        </div>
                   
                   </ion-card>
                 </div>
@@ -136,7 +199,7 @@
             </div>
           </v-breakpoint>
 
-        
+       
 
 
             <ion-button expand="block" color="secondary" @click="done()">{{$t('frontend.product.back')}}</ion-button>
@@ -164,20 +227,33 @@
 import { EventBus } from '../event-bus';
 import { VBreakpoint } from 'vue-breakpoint-component'
 import ProductDetail from '../components/ProductDetail'
+import SocialShare from '../components/SocialShare'
+
+import VueGoodshareFacebook from "vue-goodshare/src/providers/Facebook.vue"
+import VueGoodshareEmail from "vue-goodshare/src/providers/Email.vue" 
+import VueGoodshareLinked from "vue-goodshare/src/providers/LinkedIn.vue" 
+import VueGoodshareWhatsapp from "vue-goodshare/src/providers/WhatsApp"
 
 export default {
  name: "Products",
  data () {
-    return { }
+    return { 
+          staticUrl:"https://miguelaugusto87.github.io/RestaurantMenuApp/?share=", 
+
+    }
   }, 
     props: {
     cart: {type: Array, default: () => [] },
     prod: {type: Array, default: () => [] },
     categoryId: {type: String, default: "" } , 
-    category: {type: String, default: "" },  
+    category: {type: String, default: "" }, 
   },
    components:{
-    VBreakpoint: VBreakpoint
+    VBreakpoint: VBreakpoint,
+    VueGoodshareFacebook: VueGoodshareFacebook,
+    VueGoodshareEmail: VueGoodshareEmail,
+    VueGoodshareLinked: VueGoodshareLinked,
+    VueGoodshareWhatsapp: VueGoodshareWhatsapp
   },
   methods: {
       addToCart: function(id, name, price, count){
@@ -219,6 +295,25 @@ export default {
             SalePrice: SalePrice,
             Description: Description,
             ImageUrl: ImageUrl,
+          },
+        },
+      })
+      .then(m => m.present())
+      },
+
+      productShare: function(productId){
+           return this.$ionic.modalController
+      .create({
+        component: SocialShare,
+        cssClass: 'my-custom-class',
+        componentProps: {
+          data: {
+            content: 'New Content',
+          },
+          propsData: {
+            title: this.$t('frontend.product.productDetail'),
+            productId: productId,
+            
           },
         },
       })
@@ -274,5 +369,29 @@ export default {
       /* height: 150px; */
       padding: 10px 2px;
     }
+  .whatsapp__design__flat {
+    background-color: transparent !important;
+    color: #12ad10 !important;
+}
+.facebook__design__flat{
+    background-color: transparent !important;
+    color: #3b5998 !important;
+}
+.linkedin__design__flat{
+    background-color: transparent !important;
+    color: #0077b5 !important;
+}
+.email__design__flat{
+    background-color: transparent !important;
+    color: #414141 !important;
+}
+.sc-ion-card-md-h{
+  font-size: 22px;
+}
+.button-social {    
+    padding: 7px 1px !important;
+    margin: 3px 1.5px;
+    border-radius: 3px;
+}
 
 </style>
