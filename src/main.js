@@ -23,6 +23,10 @@ import { list } from "ionicons/icons";
 import { arrowRoundBack } from "ionicons/icons";
 import { eye } from "ionicons/icons";
 import { share } from "ionicons/icons";
+import { call } from "ionicons/icons";
+import { mail } from "ionicons/icons";
+import { locate } from "ionicons/icons";
+
 
 // import AppMenu from './Menu';
 addIcons({
@@ -46,6 +50,12 @@ addIcons({
   "ios-eye": eye.ios,
   "md-share": share.md,
   "ios-share": share.ios,
+  "md-call": call.md,
+  "ios-call": call.ios,
+  "md-mail": mail.md,
+  "ios-mail": mail.ios,
+  "md-locate": locate.md,
+  "ios-locate": locate.ios,
 });
 
 Vue.use(Ionic);

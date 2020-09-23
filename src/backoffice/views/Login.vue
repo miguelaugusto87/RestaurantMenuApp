@@ -1,9 +1,9 @@
 <template>
     <ion-content>
-
       <ion-card>
         <div class="logo">
-           <img  src="../../frontend/views/logo.png" >
+           <!-- <img  src="../../frontend/views/logo.png" > -->
+           <img  :src="basicSettings.ImageUrl" >
         </div>
         <ion-item>
           <ion-input type="email" name="email" :placeholder="$t('backoffice.form.fields.email')"
@@ -37,9 +37,11 @@ export default {
       password: '',
       users: [],
       indexUserIsLogin: -1,
+      basicSettings: null,
     }
   },
   created: function(){
+     this.getConfig();
      this.fetchUsers();
   },
   methods: {
@@ -102,7 +104,20 @@ export default {
         .catch(e => {
           console.log(e)
         });
-    },
+      },
+      getConfig: function(){
+        Api.fetchAll("Restaurant").then(response=> {
+            let basicSettings = [];
+            basicSettings = response.data;
+            if (basicSettings.length > 0)
+            {
+                this.basicSettings = basicSettings[basicSettings.length -1];
+            }
+        })
+        .catch(e => {
+          console.log(e)
+        });
+      },
   },
 
 }

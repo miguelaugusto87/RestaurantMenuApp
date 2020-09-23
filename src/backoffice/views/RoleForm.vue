@@ -216,6 +216,24 @@
             </ion-item>
         </ion-list>
 
+        <ion-item>
+            <p>{{$t('backoffice.form.permissionsGroup.permissionSetting')}}</p>
+            <ion-checkbox color="success" slot="end" @ionChange="selectDeselectSetting($event.target.checked)"
+                :checked="setting"
+            ></ion-checkbox>
+        </ion-item>
+        <ion-list>
+            <ion-item v-for="permission in settingPermissions" v-bind:key="permission.val">
+            <ion-label>{{permission.val}}</ion-label>
+            <ion-checkbox
+                slot="end"
+                @ionChange="permission.isChecked=$event.target.checked"
+                :checked="permission.isChecked"
+                >
+            </ion-checkbox>
+            </ion-item>
+        </ion-list>
+
       <br/>
       <ion-button expand="full" color="primary" @click="saveRole()">{{ title }}</ion-button>
 
@@ -302,6 +320,9 @@ export default {
         { id: 'canViewOrder', val: this.$t('backoffice.form.permissionsGroup.canViewOrder'), isChecked: false },  
         { id: 'canEditOrder', val: this.$t('backoffice.form.permissionsGroup.canEditOrder'), isChecked: false },
       ],
+      settingPermissions: [
+        { id: 'canChangeSetting', val: this.$t('backoffice.form.permissionsGroup.canViewOrder'), isChecked: false },  
+      ],
 
     }
   },
@@ -367,6 +388,8 @@ export default {
 
                this.orderPermissions[0].isChecked = response.data.canViewOrder;
                this.orderPermissions[1].isChecked = response.data.canEditOrder;
+
+               this.settingPermissions[0].isChecked = response.data.canChangeSetting;
 
             //    this.file = response.data.ImageUrl;
                 console.log(response.data);
@@ -465,6 +488,14 @@ export default {
         order(){
             for (let index = 0; index < this.orderPermissions.length; index++) {
                 if (!this.orderPermissions[index].isChecked){
+                    return false
+                }
+            }
+            return true;
+        },
+        setting(){
+            for (let index = 0; index < this.settingPermissions.length; index++) {
+                if (!this.settingPermissions[index].isChecked){
                     return false
                 }
             }
@@ -580,6 +611,14 @@ export default {
                 permission.isChecked = false;
         });
     },
+    selectDeselectSetting(isChecked){
+        this.settingPermissions.forEach(permission => {
+            if (isChecked)
+                permission.isChecked = true;
+            else
+                permission.isChecked = false;
+        });
+    },
     selectDeselectAll(isChecked){
         this.selectDeselectMenu(isChecked);
         this.selectDeselectCategory(isChecked);
@@ -592,6 +631,7 @@ export default {
         this.selectDeselectUser(isChecked);
         this.selectDeselectRole(isChecked);
         this.selectDeselectOrder(isChecked);
+        this.selectDeselectSetting(isChecked);
     },
     isValidForm(){
         let errors = [];
@@ -686,6 +726,7 @@ export default {
                 "canDeleteRole": this.rolePermissions[3].isChecked,
                 "canViewOrder": this.orderPermissions[0].isChecked,
                 "canEditOrder": this.orderPermissions[1].isChecked,
+                "canChangeSetting": this.settingPermissions[0].isChecked,
             }
             //If I am editing
             if (this.id){

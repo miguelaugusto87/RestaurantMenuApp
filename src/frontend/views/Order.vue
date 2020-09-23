@@ -13,7 +13,6 @@
                    
 
                         <ion-card>
-
                             <ion-card-title 
                                 style="padding: 10px;text-align: center;text-transform: uppercase;font-weight: bolder;">
                                 {{$t('frontend.order.orderDetail')}} 
@@ -365,6 +364,8 @@ export default {
    created: function(){
        this.cart = this.$route.params.cart;      
        this.order = this.$route.params.order; 
+
+       console.log('Order in Order.vue' + JSON.stringify(this.order))
        
       this.getOrderInfo();
       this.getOtherCharges();
@@ -607,7 +608,7 @@ export default {
 
             this.spinner = true
 
-         Api.fetchById('Customer', this.order.ClientId)
+        Api.fetchById('Customer', this.order.ClientId)
         .then(response => {   
              this.spinner = false
             this.CustomerEmail = response.data.EmailAddress;                   

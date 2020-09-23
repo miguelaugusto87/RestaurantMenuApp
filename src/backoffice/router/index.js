@@ -17,6 +17,11 @@ Vue.use(VueRouter)
    // component: () => import(/* webpackChunkName: "about" */ '../../App.vue'),
   },
   {
+    path: '/about/',   
+     name: 'About',
+     component: () => import(/* webpackChunkName: "about" */ '../../frontend/views/About.vue')
+   },
+  {
    path: '/products/:cart/:prod?/:categoryName?',   
     name: 'Products',
     component: () => import(/* webpackChunkName: "about" */ '../../frontend/views/Products.vue'),
@@ -376,6 +381,48 @@ Vue.use(VueRouter)
       }
     }
 
+  },
+  {
+    path: '/basicDataSettingsForm/:settingId?',
+    name: 'BasicSettingForm',
+    component: () => import(/* webpackChunkName: "about" */ '../views/BasicDataSettingsForm.vue'),
+    beforeEnter: (to, from, next) =>{
+      if (store.state.authenticated == false)
+      {
+        next("/");
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/aboutDataSettings',
+    name: 'About',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutDataSetting.vue'),
+    beforeEnter: (to, from, next) =>{
+      if (store.state.authenticated == false)
+      {
+        next("/");
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/aboutDataSettingsForm/:aboutId?',
+    name: 'AboutForm',
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutDataSettingsForm.vue'),
+    beforeEnter: (to, from, next) =>{
+      if (store.state.authenticated == false)
+      {
+        next("/");
+      } else {
+        next();
+      }
+    }
   },
 ]
 

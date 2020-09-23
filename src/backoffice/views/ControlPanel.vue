@@ -14,11 +14,15 @@
             <router-link to="/otherCharge"><ion-button v-if="hasPermission('canViewOtherCharge')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageOtherCharges') }}</ion-button></router-link>
             <router-link to="/user"><ion-button v-if="hasPermission('canViewUser')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageUsers') }}</ion-button></router-link>
             <router-link to="/role"><ion-button v-if="hasPermission('canViewRole')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageRoles') }}</ion-button></router-link>
+            <router-link to="/aboutDataSettings"><ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageAboutSettings') }}</ion-button></router-link>
+            <ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary" @click="manageBasicSettings()">{{ $t('backoffice.options.manageBasicSettings') }}</ion-button>
         </div>
     </ion-content>
 </template>
 
 <script>
+import { Api } from '../api/api.js';
+
 export default {
     
     methods: {    
@@ -64,6 +68,9 @@ export default {
                         case 'canViewOrder':
                             res = roles[index].canViewOrder;
                             break;
+                        case 'canChangeSetting':
+                            res = roles[index].canChangeSetting;
+                            break;
                         default:
                             break;
                     }
@@ -74,6 +81,25 @@ export default {
                 }
             }
             return res;
+        },
+        manageBasicSettings(){
+            Api.fetchAll('Restaurant').then(response => {
+            // console.log(response.data)
+                let basicSettings = [];
+                basicSettings = response.data;
+                if (basicSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'BasicSettingForm',
+                        params: {
+                            "settingId": basicSettings[basicSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
         },
 }
 

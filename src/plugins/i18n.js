@@ -23,7 +23,9 @@ const messages = {
                 manageShippings: 'Manage deliveries',
                 manageOtherCharges: 'Manage other charges',
                 manageUsers: 'Manage users',
-                manageRoles: 'Manage roles'
+                manageRoles: 'Manage roles',
+                manageBasicSettings: 'Manage basic settings',
+                manageAboutSettings: 'Manage about settings',
             },
             titles:{
                 controlPanel: 'Control Panel',
@@ -50,6 +52,7 @@ const messages = {
                     user: 'user',
                     order: 'order',
                     role: 'role',
+                    about: 'about',
                 },
                 messages:{
                     confirmDelete: 'Confirm delete',
@@ -63,6 +66,7 @@ const messages = {
                     deleteTax: 'Do you want to delete this tax?',
                     deleteUser: 'Do you want to delete this user?',
                     deleteRole: 'Do you want to delete this role?',
+                    deleteAbout: 'Do you want to delete this information?',
                     infoDeleteSuccess: 'Info',
                     messageDeleteSuccessCategory: 'Category was successfully deleted',
                     messageDeleteSuccessCustomer: 'Customer was successfully deleted',
@@ -74,6 +78,7 @@ const messages = {
                     messageDeleteSuccessTax: 'Tax was successfully deleted',
                     messageDeleteSuccessUser: 'User was successfully deleted',
                     messageDeleteSuccessRole: 'Role was successfully deleted',
+                    messageDeleteSuccessAbout: 'Information was successfully deleted',
                     titleEditCategory: 'Edit category',
                     titleEditCustomer: 'Edit customer',
                     titleEditMenu: 'Edit menu',
@@ -84,6 +89,7 @@ const messages = {
                     titleEditTax: 'Edit tax',
                     titleEditUser: 'Edit user',
                     titleEditRole: 'Edit role',
+                    titleEditSetting: 'Edit setting',
                     titleCreateCategory: 'Create category',
                     titleCreateCustomer: 'Create customer',
                     titleCreateMenu: 'Create menu',
@@ -94,6 +100,7 @@ const messages = {
                     titleCreateTax: 'Create tax',
                     titleCreateUser: 'Create user',
                     titleCreateRole: 'Create role',
+                    titleCreateSetting: 'Create setting',
                     messageEditSuccessCategory: 'The category was edited successfully',
                     messageEditSuccessCustomer: 'The customer was edited successfully',
                     messageEditSuccessMenu: 'The menu was edited successfully',
@@ -104,6 +111,7 @@ const messages = {
                     messageEditSuccessTax: 'The tax was edited successfully',
                     messageEditSuccessUser: 'The user was edited successfully',
                     messageEditSuccesRole: 'The role was edited successfully',
+                    messageEditSuccessSetting: 'The settings was edited successfully',
                     messageCreateSuccessCategory: 'The category was created successfully',
                     messageCreateSuccessCustomer: 'The customer was created successfully',
                     messageCreateSuccessMenu: 'The menu was created successfully',
@@ -114,6 +122,7 @@ const messages = {
                     messageCreateSuccessTax: 'The tax was created successfully',
                     messageCreateSuccessUser: 'The user was created successfully',
                     messageCreateSuccessRole: 'The role was created successfully',
+                    messageCreateSuccessSetting: 'The setting was created successfully',
                     menuChangeState: 'Menu state was successfully change',
                     activeMenu: 'Active menu',
                     otherChargeChangeState: 'Other charge state was successfully change',
@@ -132,6 +141,7 @@ const messages = {
                     deleteSubtitleTax: 'Delete tax',
                     deleteSubtitleUser: 'Delete user',
                     deleteSubtitleRole: 'Delete role',
+                    deleteSubtitleAbout: 'Delete information',
                     errorTitle: 'Error',
                     errorMessage: 'Opss a conexion error has occurred!',
                     buttons:{
@@ -155,6 +165,7 @@ const messages = {
                     backToTaxesList: 'Back to taxes list',
                     backToUsersList: 'Back to users list',
                     backToRolesList: 'Back to roles list',
+                    backToAboutList: 'Back to about list',
                     backToMenu: 'Back to menu',
                 },
                 titles:{
@@ -181,7 +192,9 @@ const messages = {
                     selectAProduct: 'Select a product',
                     selectACategory: 'Select a category',
                     selectALanguage: 'Language',
-                    allProducts: 'All products:',                                                                         
+                    allProducts: 'All products:',
+                    settingEditTitle: 'Edit settings',
+                    settingNewTitle: 'Add settings',                                                                         
                 },
                 fields:{
                     name: 'Name',
@@ -208,6 +221,9 @@ const messages = {
                     percent: 'Percent',
                     permissions: 'PERMISSIONS',
                     roles: 'ROLES',
+                    address: 'Address',
+                    title: 'Title',
+                    subtitle: 'Subtitle',
                 },
                 messages:{
                     buttons:{
@@ -226,7 +242,8 @@ const messages = {
                     validateTable: 'Validate table',
                     validateTax: 'Validate tax',
                     validateUser: 'Validate user',
-                    validateRole: 'Validar rol',
+                    validateRole: 'Validate role',
+                    validateSetting: 'Validate setting',
                     name: 'Name is required',
                     image: 'Image is required',
                     email: 'Email is required',
@@ -251,6 +268,9 @@ const messages = {
                     percent: 'Percent must be a number',
                     percentGreater: 'Percent must be greater than 0',
                     password: 'Password is required',
+                    address: 'Address is required',
+                    title: 'Title is required',
+                    subtitle: 'Subtitle is required',
                 },
                 permissionsGroup: {
                     permissionMenu: 'Menu Permissions',
@@ -264,6 +284,7 @@ const messages = {
                     permissionUser: 'User permission',
                     permissionOrder: 'Order permission',
                     permissionRole: 'Role permission',
+                    permissionSetting: 'Setting permission',
 
                     canViewMenu: 'Can view menus',
                     canCreateMenu: 'Can create menus',
@@ -307,6 +328,7 @@ const messages = {
                     canDeleteRole: 'Can delete roles',
                     canViewOrder: 'Can view orders',
                     canEditOrder: 'Can edit orders',
+                    canChangeSetting: 'Can change settings',
                 },             
             }  
         },
@@ -349,6 +371,7 @@ const messages = {
                 tableQr: 'Select Table QR',
                 notValidQr: 'Not valid QR',
                 errorRequired: 'Insert required information',
+                selectOrderType: 'Select Order Type',
             },
             orderType:{
                 email: 'Email',
@@ -407,7 +430,9 @@ const messages = {
                 manageShippings: 'Administrar envíos',
                 manageOtherCharges: 'Administrar otros recargos',
                 manageUsers: 'Administrar usuarios',
-                manageRoles: 'Administrar roles'
+                manageRoles: 'Administrar roles',
+                manageBasicSettings: 'Administrar configuraciones básicas',
+                manageAboutSettings: 'Administrar acerca de',
             },
             titles:{
                 controlPanel: 'Panel de Control',
@@ -433,7 +458,8 @@ const messages = {
                     otherCharge: 'otros cargos',
                     user: 'usuario',
                     order: 'órdenes',
-                    role: 'rol',                
+                    role: 'rol',
+                    about: 'acerca de',
                 },
                 messages:{
                     confirmDelete: 'Confirmar eliminación',
@@ -447,6 +473,7 @@ const messages = {
                     deleteTax: 'Quiere eliminar este impuesto?',
                     deleteUser: 'Quiere eliminar este usuario?',
                     deleteRole: 'Quiere eliminar este rol?',
+                    deleteAbout: 'Quiere eliminar esta información?',
                     infoDeleteSuccess: 'Información',
                     messageDeleteSuccessCategory: 'La categoría fue eliminada satisfactoriamente',
                     messageDeleteSuccessCustomer: 'El cliente fue eliminado satisfactoriamente',
@@ -458,6 +485,7 @@ const messages = {
                     messageDeleteSuccessTax: 'El impuesto fue eliminado satisfactoriamente',
                     messageDeleteSuccessUser: 'El usuario fue eliminado satisfactoriamente',
                     messageDeleteSuccessRole: 'El rol fue eliminado satisfactoriamente',
+                    messageDeleteSuccessAbout: 'La información fue eliminada satisfactoriamente',
 
                     titleEditCategory: 'Editar categoría',
                     titleEditCustomer: 'Editar cliente',
@@ -469,6 +497,8 @@ const messages = {
                     titleEditTax: 'Editar impuesto',
                     titleEditUser: 'Editar usuario',
                     titleEditRole: 'Editar rol',
+                    titleEditSetting: 'Editar configuración',
+                    
                     titleCreateCategory: 'Crear categoría',
                     titleCreateCustomer: 'Crear cliente',
                     titleCreateMenu: 'Crear menú',
@@ -479,6 +509,7 @@ const messages = {
                     titleCreateTax: 'Crear impuesto',
                     titleCreateUser: 'Crear usuario',
                     titleCreateRole: 'Crear rol',
+                    titleCreateSetting: 'Crear configuración',
                     messageEditSuccessCategory: 'La categoría fue editada satisfactoriamente',
                     messageEditSuccessCustomer: 'El cliente fue editado satisfactoriamente',
                     messageEditSuccessMenu: 'El menú fue editado satisfactoriamente',
@@ -489,6 +520,7 @@ const messages = {
                     messageEditSuccessTax: 'El impuesto fue editado satisfactoriamente',
                     messageEditSuccessUser: 'El usuario fue editado satisfactoriamente',
                     messageEditSuccesRole: 'El rol fue editado satisfactoriamente',
+                    messageEditSuccessSetting: 'Las configuraciones fueron editadas satisfactoriamente',
                     messageCreateSuccessCategory: 'La categoría fue creada satisfactoriamente',
                     messageCreateSuccessCustomer: 'El cliente fue creado satisfactoriamente',
                     messageCreateSuccessMenu: 'El menú fue creado satisfactoriamente',
@@ -499,6 +531,7 @@ const messages = {
                     messageCreateSuccessTax: 'El impuesto fue creado satisfactoriamente',
                     messageCreateSuccessUser: 'El usuario fue creado satisfactoriamente',
                     messageCreateSuccessRole: 'El rol fue creado satisfactoriamente',
+                    messageCreateSuccessSetting: 'La configuración fue creada satisfactoriamente',
 
                     menuChangeState: 'El estado del menú se cambió satisfactoriamente',
                     activeMenu: 'Activar menú',
@@ -518,6 +551,7 @@ const messages = {
                     deleteSubtitleTax: 'Eliminar impuesto',
                     deleteSubtitleUser: 'Eliminar usuario',
                     deleteSubtitleRole: 'Eliminar rol',
+                    deleteSubtitleAbout: 'Eliminar información',
                     errorTitle: 'Error',
                     errorMessage: 'Lo sentimos, ocurrió un error de conexión.',
                     buttons:{
@@ -541,6 +575,7 @@ const messages = {
                     backToTaxesList: 'Regresar al listado de impuestos',
                     backToUsersList: 'Regresar al listado de usuarios',
                     backToRolesList: 'Regresar al listado de roles',
+                    backToAboutList: 'Regresar al listado de acerca de',
                     backToMenu: 'Regresar al menú',
                 },
                 titles:{
@@ -567,7 +602,9 @@ const messages = {
                     selectAProduct: 'Seleccione un producto',
                     selectACategory: 'Seleccione una categoría',
                     selectALanguage: 'Idioma',
-                    allProducts: 'Todos los productos:',            
+                    allProducts: 'Todos los productos:',
+                    settingEditTitle: 'Editar configuración',
+                    settingNewTitle: 'Añadir configuración',            
                 },
                 fields:{
                     name: 'Nombre',
@@ -594,6 +631,9 @@ const messages = {
                     percent: 'Porciento',
                     permissions: 'PERMISOS',
                     roles: 'ROLES',
+                    address: 'Dirección',
+                    title: 'Título',
+                    subtitle: 'Subtítulo',
                 },
                 messages:{
                     buttons:{
@@ -613,6 +653,7 @@ const messages = {
                     validateTax: 'Validar impuesto',
                     validateUser: 'Validar usuario',
                     validateRole: 'Validar rol',
+                    validateSetting: 'Validar configuración',
                     name: 'El nombre es requerido',
                     image: 'La imagen es requerida',
                     email: 'El email es requerido',
@@ -637,6 +678,9 @@ const messages = {
                     percent: 'El porciento es requerido',
                     percentGreater: 'El porciento debe ser mayor que 0',
                     password: 'El password es requerido',
+                    address: 'La dirección es requerida',
+                    title: 'El título es requerido',
+                    subtitle: 'El subtítulo es requerido',
                 },
                 permissionsGroup: {
                     permissionMenu: 'Permisos de menús',
@@ -650,6 +694,7 @@ const messages = {
                     permissionUser: 'Permisos de usuarios',
                     permissionOrder: 'Permisos de órdenes',
                     permissionRole: 'Permisos de roles',
+                    permissionSetting: 'Permisos de configuración',
                     
                     canViewMenu: 'Puede ver menús',
                     canCreateMenu: 'Puede crear menús',
@@ -693,6 +738,7 @@ const messages = {
                     canDeleteRole: 'Puede eliminar roles',
                     canViewOrder: 'Puede ver órdenes',
                     canEditOrder: 'Puede editar órdenes',
+                    canChangeSetting: 'Puede cambiar las configuraciones',
                 },  
             }            
         },
@@ -733,7 +779,8 @@ const messages = {
                 pickTime: 'Horario de recogida',
                 tableQr: 'Seleccione el QR de su Mesa',
                 notValidQr: 'Código QR no válido',
-                errorRequired: 'Inserte la información requerida'
+                errorRequired: 'Inserte la información requerida',
+                selectOrderType: 'Seleccione Tipo de orden',
             },
             orderType:{
                 email: 'Correo',

@@ -13,9 +13,34 @@
 
         <ion-card  >
 
-            <ion-item>
+            <div>
                 <img class="menu-col-12" :src="ImageUrl">
-            </ion-item>
+                 <div class="menu-col-12" style="text-align: center;">
+                  <vue-goodshare-facebook 
+                    :page_url= staticUrl+productId
+                    :page_title="Title" 
+                    has_icon
+                    title_social=""
+                    ></vue-goodshare-facebook>
+                    <vue-goodshare-whatsapp 
+                    :page_url= staticUrl+productId
+                    :page_title="Title" 
+                    has_icon
+                    title_social=""
+                    ></vue-goodshare-whatsapp>
+                  <vue-goodshare-linked 
+                    :page_url= staticUrl+productId
+                    :page_title="Title"  
+                    has_icon
+                    title_social=""
+                    ></vue-goodshare-linked>
+                  <vue-goodshare-email
+                    :page_url= staticUrl+productId
+                    :page_title="Title" 
+                    has_icon
+                    ></vue-goodshare-email>
+                </div>
+            </div>
 
             <ion-card-content>
 
@@ -43,11 +68,16 @@
 </template>
 
 <script>
+import VueGoodshareFacebook from "vue-goodshare/src/providers/Facebook.vue"
+import VueGoodshareEmail from "vue-goodshare/src/providers/Email.vue" 
+import VueGoodshareLinked from "vue-goodshare/src/providers/LinkedIn.vue" 
+import VueGoodshareWhatsapp from "vue-goodshare/src/providers/WhatsApp"
 
 export default {
   name: 'ProductDetail',
   props: {
     title: { type: String, default: '' },
+    productId: { type: String, default: '' },
     ImageUrl: { type: String, default: '' },
     Name: { type: String, default: '' },
     Description: { type: String, default: '' },
@@ -57,10 +87,16 @@ export default {
     return {
       content: 'Content',
       result: '',
-      error: ''  
+      error: ''  ,
+      staticUrl:"https://miguelaugusto87.github.io/RestaurantMenuApp/?share=",
     }
   },
-
+   components:{
+    VueGoodshareFacebook: VueGoodshareFacebook,
+    VueGoodshareEmail: VueGoodshareEmail,
+    VueGoodshareLinked: VueGoodshareLinked,
+    VueGoodshareWhatsapp: VueGoodshareWhatsapp
+  },
 methods: {
 
     dismissQr(){

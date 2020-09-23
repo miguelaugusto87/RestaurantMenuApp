@@ -137,10 +137,7 @@ export default {
      this.cart = this.$route.params.cart;
    }
 
-  if (this.$route.params.share)
-   {
-    alert(this.$route.params.share)
-   }
+ 
   
     if (this.$route.params.clientId) {
      this.clientId = this.$route.params.clientId;
@@ -286,8 +283,12 @@ export default {
       });
     },
      
-    productsByCategory(categoryId, categoryName){ 
-      this.spinner = true;
+    productsByCategory(categoryId, categoryName){       
+      if(this.orderType === '')
+      {
+         return this.alertSelectOrderType();
+      }
+       this.spinner = true;
       this.categoryName = categoryName;
       Api.getProductsByCategory(categoryId).then(response => {
           this.prod = response.data
@@ -382,6 +383,7 @@ export default {
              
               EventBus.$emit('addressToDeliver', this.address );      
               EventBus.$emit('orderType', 'Delivery' ); 
+              EventBus.$emit('updateOrder', this.order );
 
               this.showProduct = false; 
               
@@ -422,6 +424,7 @@ export default {
               
               EventBus.$emit('HourToPick', this.hourToPick );      
               EventBus.$emit('orderType', 'PickUp' ); 
+              EventBus.$emit('updateOrder', this.order );
 
               this.showProduct = false;  
               console.log(JSON.stringify(this.order))
@@ -450,6 +453,7 @@ export default {
           this.order.OrderType = "On Table";
           this.order.tableService = this.tableService;        
           EventBus.$emit('orderType', 'On Table' );
+          EventBus.$emit('updateOrder', this.order );
           this.changeOrderButton();                  
           console.log(JSON.stringify(this.order))
           this.spinner = false             
@@ -462,13 +466,31 @@ export default {
       });
    },
 
-
     alertRequiredDatas(){
       return  this.$ionic.alertController
       .create({
           cssClass: 'my-custom-class',
           header: 'Error',
           message: this.$t('frontend.home.errorRequired'),
+          buttons: [                   
+          {
+              text: this.$t('frontend.home.acept'),
+              handler: () => {                                 
+                            
+              },
+          },
+          ],
+      })
+      .then(a => a.present())
+                  
+    },
+
+     alertSelectOrderType(){
+      return  this.$ionic.alertController
+      .create({
+          cssClass: 'my-custom-class',
+          header: 'Error',
+          message: this.$t('frontend.home.selectOrderType'),
           buttons: [                   
           {
               text: this.$t('frontend.home.acept'),

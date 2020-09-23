@@ -66,7 +66,7 @@
                       </ion-card-content>
                         <div class="menu-col-12" style="text-align: right">
                           <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr._id, pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
                         </div>
                   
                   </ion-card>
@@ -128,7 +128,7 @@
                       </ion-card-content>
                         <div class="menu-col-12" style="text-align: right">
                           <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr._id,pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
                         </div>
                   
                   </ion-card>
@@ -189,7 +189,7 @@
                       </ion-card-content>
                         <div class="menu-col-12" style="text-align: right">
                           <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          <ion-button size="default" fill="outline" @click="productDetail(pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                          <ion-button size="default" fill="outline" @click="productDetail(pr._id,pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
                         </div>
                   
                   </ion-card>
@@ -280,7 +280,7 @@ export default {
       EventBus.$emit('showProduct', false );
       },
 
-      productDetail: function(Name, SalePrice, Description, ImageUrl){
+      productDetail: function(productId, Name, SalePrice, Description, ImageUrl){
            return this.$ionic.modalController
       .create({
         component: ProductDetail,
@@ -291,6 +291,7 @@ export default {
           },
           propsData: {
             title: this.$t('frontend.product.productDetail'),
+            productId: productId,
             Name: Name,
             SalePrice: SalePrice,
             Description: Description,

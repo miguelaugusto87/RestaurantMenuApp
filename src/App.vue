@@ -11,18 +11,47 @@
           </ion-toolbar>
         </ion-header>
         <ion-content padding class="menu ion-page">  
-          <ion-list>
-            <ion-item> <img src="./frontend/views/logo.png" style="margin: 80px 0 30px 0"></ion-item>            
+          <ion-content>
+            <ion-item> </ion-item>
+            <div style="margin-top: 20px">
+                <Language />
+            </div>
+
+            <ion-card>
+              <div class="logo" style="margin-bottom: 5px;">
+                <img  :src="restaurantLogo" >
+              </div>
+              
+              <ion-item> 
+                <div style="position: absolute; bottom: 0;text-align: center;width: 100%;">
+                  <a :href="restaurantFacebok" v-if="restaurantFacebok != ''">
+                    <span class="iconify" color="#3b5998"  data-icon="ion-logo-facebook" data-inline="false" ></span> 
+                  </a>
+                  <a :href="restaurantTwitter" v-if="restaurantTwitter != ''">
+                    <span class="iconify" color="#1DA1F2" data-icon="ion-logo-twitter" data-inline="false"></span> 
+                  </a>
+                  <a :href="restaurantInstagram" v-if="restaurantInstagram != ''">
+                    <span class="iconify" color="#8a3ab9" data-icon="ion-logo-instagram" data-inline="false"></span> 
+                  </a>
+                  <a :href="restaurantYoutube" v-if="restaurantYoutube != ''">
+                    <span class="iconify" color="#FF0000" data-icon="ion-logo-youtube" data-inline="false"></span>  
+                  </a>
+                </div> 
+              </ion-item>     
+                 
+              <ion-item @click="goAbout">{{$t('frontend.menu.about')}}</ion-item> 
+              <ion-item v-if="clientId !=''" @click="goHome">{{$t('frontend.menu.oferts')}}</ion-item>
+              <ion-item v-if="clientId !=''" @click="clientUpdateHisData">{{$t('frontend.menu.edit')}}</ion-item>         
+              <ion-item  @click="getOrderList">{{$t('frontend.menu.orders')}}</ion-item>  
+
+            </ion-card>     
             
-            <ion-item @click="closeStart">{{$t('frontend.menu.about')}}</ion-item> 
-            <ion-item v-if="clientId !=''" @click="goHome">{{$t('frontend.menu.oferts')}}</ion-item>
-            <ion-item v-if="clientId !=''" @click="clientUpdateHisData">{{$t('frontend.menu.edit')}}</ion-item>         
-            <ion-item  @click="getOrderList">{{$t('frontend.menu.orders')}}</ion-item>  
+           
             
-             <Language />
+            
           
 
-          </ion-list>
+          </ion-content>
         </ion-content>
       </ion-menu>
 
@@ -58,6 +87,8 @@
            <ion-item v-if="hasPermission('canViewOtherCharge')"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
            <ion-item v-if="hasPermission('canViewUser')"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
            <ion-item v-if="hasPermission('canViewRole')"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canChangeSetting')"><router-link to="/aboutDataSettings" >{{ $t('backoffice.options.manageAboutSettings') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canChangeSetting')"><a @click="manageBasicSettings()">{{ $t('backoffice.options.manageBasicSettings') }}</a></ion-item>
         </ion-content>
       </ion-menu>
 
@@ -65,7 +96,7 @@
         <ion-header>
           <ion-toolbar color="primary">             
             <ion-icon @click="openStart" name="menu" class="menu-col-2" style="float: left;font-size: 30px;"></ion-icon> 
-            <ion-title class="menu-col-8" style="float: left">Restaurant</ion-title>          
+            <ion-title class="menu-col-8" style="float: left">{{restaurantName}}</ion-title>          
             <ion-icon @click="openEnd" name="settings" class="menu-col-2" style="float: right;font-size: 30px;"></ion-icon>
           </ion-toolbar>
         </ion-header>
@@ -78,7 +109,7 @@
 
      
       
-      <v-breakpoint v-if="clientId ==='' && !getAuthenticated" style="padding: 20px;">
+      <v-breakpoint v-if="clientId ==='' && !getAuthenticated && !aboutPage" style="padding: 20px;">
       <div slot-scope="scope">
 
         <span v-if="scope.isSmall || scope.isMedium || scope.noMatch" > 
@@ -141,13 +172,14 @@
     </ion-content>
 
     <ion-footer class="ion-no-border">
-      <ion-toolbar>
-        <ion-title>Solution For Success</ion-title>
+      <ion-toolbar v-if="!aboutPage">
+        <ion-title class="menu-col-12">Solution For Success</ion-title>
       </ion-toolbar>
     </ion-footer>
   </ion-app>
 </template>
 
+<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
 
 <script>
 
@@ -157,6 +189,7 @@ import Login from './backoffice/views/Login.vue'
 import { settings } from "ionicons/icons";
 import { menu } from "ionicons/icons";
 import { add } from "ionicons/icons";
+import { logoFacebook } from "ionicons/icons";
 import { addIcons } from "ionicons";
 
 addIcons({
@@ -189,7 +222,9 @@ export default {
     this.productDetail(this.$route.query.share)
    }
 
-  EventBus.$on('updateCart', (value) => {
+    this.restaurantData();
+
+    EventBus.$on('updateCart', (value) => {
       this.cart = value;     
     });
 
@@ -286,7 +321,19 @@ export default {
       clientHasOrder: false,  
       spinner: false,
       phone:'',
-      email:'',    
+      email:'', 
+      
+      aboutPage:false,
+      restaurantName: '',
+      restaurantPhone: '',
+      restaurantLogo: '',
+      restaurantEmail: '',
+      restaurantAddress: '',
+
+      restaurantFacebok:'',
+      restaurantTwitter:'',
+      restaurantInstagram:'',
+      restaurantYoutube: '',
     }
   }, 
   components:{
@@ -299,7 +346,7 @@ export default {
     getAuthenticated: function(){
       return this.$store.state.authenticated;
     },
-  },
+  },     
   watch: {
     
   },
@@ -346,6 +393,9 @@ export default {
                       case 'canViewOrder':
                           res = roles[index].canViewOrder;
                           break;
+                      case 'canChangeSetting':
+                          res = roles[index].canChangeSetting;
+                          break;
                       default:
                           break;
                 }
@@ -364,6 +414,26 @@ export default {
                 || this.hasPermission('canViewTax') || this.hasPermission('canViewShipping') || this.hasPermission('canViewOtherCharge')
                   || this.hasPermission('canViewUser') || this.hasPermission('canViewRole'))
     },
+
+    manageBasicSettings(){
+            Api.fetchAll('Restaurant').then(response => {
+            // console.log(response.data)
+                let basicSettings = [];
+                basicSettings = response.data;
+                if (basicSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'BasicSettingForm',
+                        params: {
+                            "settingId": basicSettings[basicSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
+        },
 
     openStart () {
         document.querySelector('ion-menu-controller').open('start')     
@@ -537,6 +607,12 @@ export default {
       return this.$router.push({ name: 'Home', params: {cart:this.cart, order: this.order, clientId: this.clientId } })
     },
 
+    goAbout: function(){
+      this.closeStart();
+      this.aboutPage = true;
+      return this.$router.push({ name: 'About' })
+    },
+
     getOrderList: function(){  
       this.closeStart();   
       
@@ -701,8 +777,95 @@ export default {
         
       });
 
-    }
+    },
+
+    restaurantData: function(){
+
+      Api.fetchAll("Restaurant").then(response => {          
+        if(response.status === 200){
+            console.log('Restaurant Data: '+ JSON.stringify( response.data[0].Sociasls))
+              this.restaurantName= response.data[0].Name;
+              this.restaurantPhone= response.data[0].Phone;
+              this.restaurantLogo= response.data[0].ImageUrl;
+              this.restaurantEmail= response.data[0].Email;
+              this.restaurantAddress= response.data[0].Address;
+
+              const fcb = response.data[0].Sociasls.findIndex(pr => pr.SocialName === 'Facebook');
+              if (fcb !== -1)  this.restaurantFacebok=  response.data[0].Sociasls[fcb].SocialUrl;
+              const twt = response.data[0].Sociasls.findIndex(pr => pr.SocialName === 'Twitter');
+              if (twt !== -1)  this.restaurantTwitter=  response.data[0].Sociasls[twt].SocialUrl;
+              const itg = response.data[0].Sociasls.findIndex(pr => pr.SocialName === 'Instagram');
+              if (itg !== -1)  this.restaurantInstagram =  response.data[0].Sociasls[itg].SocialUrl;
+              const ytb = response.data[0].Sociasls.findIndex(pr => pr.SocialName === 'Youtube');
+              if (ytb !== -1)  this.restaurantYoutube =  response.data[0].Sociasls[ytb].SocialUrl;              
+              
+             
+        }      
+        
+      })
+      .catch(e => {
+        console.log(e)        
+      });
+
+    },
+     
+    marketingAction(client) {
+    return this.$ionic.alertController
+    .create({
+      cssClass: 'my-custom-class',
+      header: this.$t('frontend.orderType.contactedBy'),
+      inputs: [ 
+        {value: 'Email',  type: 'checkbox',  label: this.$t('frontend.orderType.email'), checked: true, },
+        {value: 'Phone',  type: 'checkbox',  label: this.$t('frontend.orderType.phone'), checked: false, },
+      ],
+      buttons: [
+        {
+          text: this.$t('frontend.home.cancel'), role: 'cancel', cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel')
+          },
+        },
+        {
+          text: this.$t('frontend.home.acept'),
+          handler: (inputs) => {
+            client.MarketingConsent = { 'Email': inputs.indexOf('Email') !== -1,
+                                      'Phone': inputs.indexOf('Phone') !== -1}             
+            this.updateCustomer(client)
+          },
+        },
+      ],
+    })
+    .then(a => a.present())
+  },
    
+     updateCustomer: function(client){
+    this.spinner = true
+    Api.putIn('Customer', client)
+      .then(response => {
+        this.spinner = false
+        return response;
+      })
+      .catch(e => {
+        console.log(e);
+        this.spinner = false
+        return  this.$ionic.alertController
+            .create({
+                cssClass: 'my-custom-class',
+                header: 'Error',
+                message: e,
+                buttons: [                   
+                {
+                    text: this.buttonAcept,
+                    handler: () => {                                 
+                                  
+                    },
+                },
+                ],
+            })
+            .then(a => a.present())
+      })
+  },
+    
   
   },
 };
@@ -766,5 +929,25 @@ border-bottom: 1px solid #da0f0f;
     width: calc(calc(2 / var(--ion-grid-columns, 12)) * 100%);
     max-width: calc(calc(2 / var(--ion-grid-columns, 12)) * 100%);
 }
+.menu-col-3{
+    flex: 0 0 calc(calc(3 / var(--ion-grid-columns, 12)) * 100%);
+    width: calc(calc(3 / var(--ion-grid-columns, 12)) * 100%);
+    max-width: calc(calc(3 / var(--ion-grid-columns, 12)) * 100%);
+}
+.menu-col-4{
+    flex: 0 0 calc(calc(4 / var(--ion-grid-columns, 12)) * 100%);
+    width: calc(calc(4 / var(--ion-grid-columns, 12)) * 100%);
+    max-width: calc(calc(4 / var(--ion-grid-columns, 12)) * 100%);
+}
+.menu-col-12{
+    flex: 0 0 calc(calc(12 / var(--ion-grid-columns, 12)) * 100%);
+    width: calc(calc(12 / var(--ion-grid-columns, 12)) * 100%);
+    max-width: calc(calc(12 / var(--ion-grid-columns, 12)) * 100%);
+}
+.iconify{
+  width: 30px;
+  height: 30px;
+  margin: 2px 10px;
 
+}
 </style>
