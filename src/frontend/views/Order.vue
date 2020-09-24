@@ -23,8 +23,8 @@
                                 <ion-label class="subtitles-order menu-col-4" style=" padding: 5px 10px; margin: 0;float: left;"> {{$t('frontend.order.client')}}: </ion-label>                   
                                 <h3 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;">  {{CustomerName}}</h3>
 
-                                <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}}: </h3>
-                                <ion-datetime v-if="order.OrderType=='PickUp'" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
+                                <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}} </h3>
+                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
                                 <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
                                 <ion-label v-if="order.OrderType=='On Table'" style=" float: left;text-align: left;" class="subtitles-order menu-col-4">{{ orderInfo}}</ion-label>
                             </ion-card>
@@ -186,8 +186,8 @@
                                 <ion-label class="subtitles-order menu-col-4" style=" padding: 5px 10px; margin: 0;float: left;"> {{$t('frontend.order.client')}}: </ion-label>                   
                                 <h3 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;">  {{CustomerName}}</h3>
 
-                                <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}}: </h3>
-                                <ion-datetime v-if="order.OrderType=='PickUp'" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
+                                <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}} </h3>
+                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
                                 <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-4" ></ion-input>
                                 <ion-label v-if="order.OrderType=='On Table'" style=" float: left;text-align: left;" class="subtitles-order menu-col-4">{{ orderInfo}}</ion-label>
                             </ion-card>
@@ -371,6 +371,7 @@ export default {
       this.getOtherCharges();
       this.getTax();
       this.getShipping();
+      this.getConfig();
       
    },
    data () {
@@ -395,7 +396,8 @@ export default {
       dateTodaymin: new Date().toISOString().substr(0, 7),
       dateTodaymax:  new Date().getFullYear(),
       cardNumber:'',
-      expirationCard:''
+      expirationCard:'',
+      selectPickHour: false,
     }
   }, 
   computed: {
@@ -421,6 +423,21 @@ export default {
     VBreakpoint: VBreakpoint
   }, 
    methods: {
+
+    getConfig: function(){
+        this.spinner = true;
+        Api.fetchAll("Setting").then(response => {
+            this.spinner = false;
+            if(response.status === 200){
+                console.log('Setting Data: ' + JSON.stringify(response.data[0]))
+                this.selectPickHour = response.data[0].SelectPickHour;
+            }
+        })
+        .catch(e => {
+            this.spinner = false;
+            console.log(e)                
+        });
+    },  
     
     totalByProduct(cant, price){
         return cant * price;

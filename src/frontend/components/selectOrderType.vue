@@ -38,11 +38,17 @@
           </ion-input>
         </ion-item>
 
-        <ion-item v-if="selected=='PickUp'">
-          <ion-input type="time" name="pickup" 
+        
+
+        <ion-item v-if="selected=='PickUp' && selectPickHour">
+          <!-- <ion-input type="time" name="pickup" min="12:00:00:00" max="18:00" step="600"
           @input="hourPick = $event.target.value" 
           v-bind:value="hourPick">
-          </ion-input>
+          </ion-input> -->
+          <ion-datetime display-format="HH:mm" name="pickup" :max="maxHour" 
+         :min="minHour" required=true 
+          @input="hourPick = $event.target.value" 
+          v-bind:value="minHour"> </ion-datetime>
         </ion-item>
 
         <ion-item>
@@ -61,6 +67,7 @@
 import { EventBus } from '../event-bus';
 import { Api } from '../../backoffice/api/api'
 import { parsePhoneNumber } from 'libphonenumber-js'
+import Moment from 'moment'
 
 
 export default {
@@ -79,6 +86,9 @@ export default {
     requiredData: { type: String },
     contactedBy: { type: String },
   },
+  created: function(){
+    this.getConfig();
+  },
   data() {
     return {
       content: 'Content',
@@ -91,12 +101,45 @@ export default {
       hourPick:new Date().getHours()+':' +new Date().getMinutes(),
       spinner: false,
       order:{},
+      selectPickHour: false,
+      minHour: '12:00',
+      maxHour: '23:59',
+      minTimeToCook: 0
     }
   },
 components:{  
   
   },
 methods: {
+
+  getConfig: function(){
+    Api.fetchAll("Setting").then(response => {
+        if(response.status === 200){
+            console.log('Setting Data: ' + JSON.stringify(response.data[0]))
+            this.selectPickHour = response.data[0].SelectPickHour;           
+            this.minTimeToCook = response.data[0].MinTimeToCook;
+
+           
+            let min = Moment(response.data[0].PickFrom ,'kk:mm')       
+            let max = Moment(response.data[0].PickTo ,'kk:mm')
+            let now = Moment().add(this.minTimeToCook, 'minutes'); 
+            
+            max = max.subtract(1, 'minutes'); 
+
+            this.minHour =  min.format('kk:mm');
+            this.maxHour = max.format('kk:mm');
+                   
+            console.log(this.minHour + ' now: ' + now.format('kk:mm') + ' min: ' + min.format('kk:mm') + 'max: ' + max.format('kk:mm'))
+                       
+            if(now > min && now < max)
+             this.minHour = now.format('kk:mm')
+        }
+    })
+    .catch(e => {
+        console.log(e)                
+    });
+  },
+  
   close() {
     return this.$ionic.modalController.dismiss()
   },
@@ -107,16 +150,21 @@ methods: {
       return this.alertRequiredDatas();
     if(this.selected === 'Delivery' && this.address === '')
       return this.alertRequiredDatas();
+    if(this.selected === 'PickUp' && this.selectPickHour && this.pickup === '')
+      return this.alertRequiredDatas();
             
     var client = {'EmailAddress': this.email,'Name':this.name,'Phone':this.phone}
     if(this.clientId === '')
       this.createCustomer(client);
 
+    if(!this.selectPickHour )
+      this.hourPick = '';
+
     this.order = {
       "OrderType":this.selected,
       "State":"Pending payment",
       "ClientId" : this.clientId,
-      "AddressToDeliver": this.address,
+      "AddressToDeliver": this.address,      
       "HourToPick": this.hourPick,
       "tableService": this.table,
     }       
@@ -138,7 +186,6 @@ methods: {
     EventBus.$emit('openHome', true );      
     this.$ionic.modalController.dismiss()  
   },
-
 
   alertRequiredDatas(){
     return  this.$ionic.alertController

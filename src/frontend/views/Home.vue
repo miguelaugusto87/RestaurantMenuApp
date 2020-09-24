@@ -7,7 +7,8 @@
 
       <div v-if="!spinner && clientId !=''">        
           <ion-button :disabled="isDelivery" :color="isDelivery ? 'primary' : 'light'" @click="deliveryAction">{{$t('frontend.app.deliver')}}</ion-button>
-          <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
+          <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" v-if="selectPickHour" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
+          <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" v-if="!selectPickHour" @click=" sinPickAction ">{{$t('frontend.app.pickup')}}</ion-button>
           <ion-button :disabled="isTable" :color="isTable ? 'primary' : 'light'" @click="show">{{$t('frontend.app.table')}}</ion-button> 
           <ion-button color="primary"  @click="productDetails">{{cart.length}}<ion-icon name="cart"></ion-icon></ion-button>
       </div>
@@ -116,6 +117,7 @@ import { EventBus } from '../event-bus';
  import Products from './Products'
  import { QrcodeStream } from 'vue-qrcode-reader'
  import { VBreakpoint } from 'vue-breakpoint-component'
+ import Moment from 'moment'
 
 export default {
   name: "HomePage",
@@ -156,6 +158,8 @@ export default {
 
    this.fetchCategories();
 
+   this.getConfig();
+
   },
   data () {
     return {
@@ -172,8 +176,13 @@ export default {
       categories: [],
       prod: [],
       cart: [],
-      dateTime: new Date().getHours()+':' +new Date().getMinutes(),
       spinner: false,
+      timeToPick: true,
+      rangeToPick: '',
+      rangeToCook: '',
+      rangeMssg: '',
+      minHour: '12:00',
+      maxHour:'20:00',
       
       orderType:'',     
       CustomerName :'',     
@@ -183,7 +192,7 @@ export default {
 
       showProduct: false,
       categoryName: '',
-      devWidth: '',
+      selectPickHour: false,
     }
   }, 
   components:{
@@ -193,9 +202,44 @@ export default {
   },  
   methods: {
 
+    getConfig: function(){
+      this.spinner = true;
+      Api.fetchAll("Setting").then(response => {
+        this.spinner = false;
+          if(response.status === 200){
+              console.log('Setting Data: ' + JSON.stringify(response.data[0]))
+              this.selectPickHour = response.data[0].SelectPickHour;
+
+              let minTimeToCook = response.data[0].MinTimeToCook;            
+              let now = Moment().add(minTimeToCook, 'minutes');  
+              let min = Moment(response.data[0].PickFrom ,'kk:mm')                  
+              let max = Moment(response.data[0].PickTo ,'kk:mm')
+              max = max.subtract(1, 'minutes'); 
+
+              this.minHour =  min.format('kk:mm');
+              this.maxHour = max.format('kk:mm');
+
+              this.rangeToPick = response.data[0].PickFrom + ' - ' + response.data[0].PickTo;
+              this.rangeToCook = response.data[0].MinTimeToCook
+            
+              if(now > max)
+                this.timeToPick = false;
+              if(now > min && now < max)
+                this.minHour = now.format('kk:mm')
+
+              this.rangeMssg = this.minHour + ' - ' + this.maxHour;
+          }
+      })
+      .catch(e => {
+        this.spinner = false;
+          console.log(e)                
+      });
+    },
+
     show () {
       this.$modal.show('my-first-modal');
         },
+    
     hide () {
       this.$modal.hide('my-first-modal');
         },
@@ -226,7 +270,6 @@ export default {
         }
       })
     },
-
 
     fetchProducts: function(){
       this.spinner = true
@@ -396,12 +439,18 @@ export default {
     },
 
     pickAction() {
+      this.getConfig(); 
+
+       if(!this.timeToPick )
+        return this.alertNoTimeToPick();
+
       return this.$ionic.alertController
       .create({
         cssClass: 'my-custom-class',
         header: this.$t('frontend.home.pickupDetail'),
+        message: "Horario de recogida disponible: " + this.rangeMssg,
         inputs: [         
-          {name: 'hourPick',  type: 'time',   value:this.dateTime },
+          {name: 'hourPick',  type: 'time', value:this.minHour, min: "14:00", max: '15:18' },
         ],
         buttons: [
           {
@@ -415,6 +464,12 @@ export default {
             handler: (data) => {
                if(data.hourPick==='')
                   return this.alertRequiredDatas();
+
+              let now = Moment(data.hourPick ,'kk:mm')
+              let min = Moment(this.minHour,'kk:mm')                  
+              let max = Moment(this.maxHour ,'kk:mm')
+              if(now < min || now > max)
+                return this.alertNoTimeToPick()
 
               this.orderType = "PickUp"
               this.hourToPick = data.hourPick
@@ -434,6 +489,18 @@ export default {
         ],
       })
       .then(a => a.present())
+    },
+
+    sinPickAction() {
+        this.orderType = "PickUp"
+        this.hourToPick = ''
+        this.changeOrderButton(); 
+        this.order.OrderType = "PickUp";
+        this.order.HourToPick = this.hourToPick;         
+        EventBus.$emit('HourToPick', this.hourToPick );      
+        EventBus.$emit('orderType', 'PickUp' ); 
+        EventBus.$emit('updateOrder', this.order );
+        this.showProduct = false;
     },
 
     tableAction: async function(value) {
@@ -485,6 +552,24 @@ export default {
                   
     },
 
+    alertNoTimeToPick(){
+      return  this.$ionic.alertController
+      .create({
+          cssClass: 'my-custom-class',
+          header: 'Info',
+          message: this.$t('frontend.home.notTimeToPick') + this.rangeToPick + this.$t('frontend.home.cookTime') + this.rangeToCook + this.$t('frontend.home.minuts'),
+          buttons: [                   
+          {
+              text: this.$t('frontend.home.acept'),
+              handler: () => {                                 
+                            
+              },
+          },
+          ],
+      })
+      .then(a => a.present())
+                  
+    },
      alertSelectOrderType(){
       return  this.$ionic.alertController
       .create({

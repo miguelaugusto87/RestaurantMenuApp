@@ -13,25 +13,36 @@
                                 {{$t('frontend.order.orderDetail')}} 
                         </ion-card-title>
 
-                        <ion-card>  
-                            <h4 class="subtitles-order menu-col-4" style=" padding: 5px 10px; margin: 0;float: left;color:black;"> {{$t('frontend.order.client')}}: </h4>                
-                            <h4 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left; ">  {{CustomerName}}</h4>
-
-                        
-                            <h4 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;color:black;"> {{order.OrderType}}: </h4>
-                            <h4 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;"> {{ orderInfo}}</h4>
-                        </ion-card>
-
-                        <ion-item-divider/>
-
-                        <ion-label class="ion-text-wrap">
-                                <h2  style="width: 100%;float: left;font-size: 16px;font-weight: bold;
+                         
+                             <ion-label class="ion-text-wrap" >
+                                <h2  style="width: 100%;float: left;font-size: 16px;
                                 text-align: left; padding-left: 20px;color: black;">
-                                {{$t('frontend.order.orderState')}}:  {{showStates}}</h2>
+                                {{$t('frontend.order.client')}}:<strong>  {{CustomerName}} </strong> </h2>
+                            </ion-label>
+
+                             <ion-label class="ion-text-wrap">
+                                <h2  style="width: 100%;float: left;font-size: 16px;
+                                text-align: left; padding-left: 20px;color: black;">
+                                 {{order.OrderType}}: <strong>  {{ orderInfo}} </strong>  </h2>
+                            </ion-label>
+
+                            
+                        <ion-item-divider style="margin-bottom: 15px;"/>
+
+                        <ion-label class="ion-text-wrap"  v-if="showCooker && cooker!=''">
+                                <h2  style="width: 100%;float: left;font-size: 16px;
+                                text-align: left; padding-left: 20px;color: black;">
+                                {{$t('frontend.order.cooker')}}: <strong> {{cooker}} </strong> </h2>
                         </ion-label>
 
-                            <ion-range ref="rangeDualKnobs" dual-knobs="false" min="1" max="5" step="1"
-                            snaps="true" value="1" color="success" disabled="true" ></ion-range>
+                        <ion-label class="ion-text-wrap">
+                                <h2  style="width: 100%;float: left;font-size: 16px;
+                                text-align: left; padding-left: 20px;color: black;">
+                                {{$t('frontend.order.orderState')}}: <strong>  {{showStates}} </strong> </h2>
+                        </ion-label>
+                        <ion-range ref="rangeDualKnobs" dual-knobs="false" min="1" max="5" step="1"
+                        snaps="true" value="2" color="success" disabled="true" ></ion-range>
+
 
                         <ion-item-divider/>        
 
@@ -50,9 +61,9 @@
                             <ion-item-sliding v-for="product in order.Products" v-bind:key="product.ProductId">
 
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap menu-col-6" >
-                                        <h2>{{ product.Name }}</h2>
-                                    </ion-label>
+                                    <div class="ion-text-wrap menu-col-6" >
+                                        <p>{{ product.Name }}</p>
+                                    </div>
                                     <ion-label class="ion-text-wrap menu-col-2">                        
                                         <h3>{{ product.Cant }}</h3>                       
                                     </ion-label>
@@ -72,9 +83,9 @@
                                 </ion-label>
                                 <ion-item-sliding  v-for="charge in order.OtherCharges" v-bind:key="charge.Id">
                                     <ion-item>
-                                        <ion-label class="menu-col-6">
-                                            <h3>{{ charge.Name }} </h3>
-                                        </ion-label>
+                                        <div class="menu-col-6">
+                                            <p>{{ charge.Name }} </p>
+                                        </div>
                                         <ion-label  class="menu-col-2"> </ion-label>
                                         <ion-label  class="menu-col-2"> </ion-label>
                                         <ion-label  class="menu-col-2" >
@@ -133,16 +144,25 @@
                                 {{$t('frontend.order.orderDetail')}} 
                         </ion-card-title>
 
-                        <ion-card>  
-                            <h4 class="subtitles-order menu-col-4" style=" padding: 5px 10px; margin: 0;float: left;color:black;"> {{$t('frontend.order.client')}}: </h4>                
-                            <h4 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left; ">  {{CustomerName}}</h4>
+                       <ion-label class="ion-text-wrap" >
+                            <h2  style="width: 100%;float: left;font-size: 16px;
+                            text-align: left; padding-left: 20px;color: black;">
+                            {{$t('frontend.order.client')}}:<strong>  {{CustomerName}} </strong> </h2>
+                        </ion-label>
 
-                        
-                            <h4 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;color:black;"> {{order.OrderType}}: </h4>
-                            <h4 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;"> {{ orderInfo}}</h4>
-                        </ion-card>
+                        <ion-label class="ion-text-wrap">
+                            <h2  style="width: 100%;float: left;font-size: 16px;
+                            text-align: left; padding-left: 20px;color: black;">
+                            {{order.OrderType}}: <strong>  {{ orderInfo}} </strong>  </h2>
+                        </ion-label>
 
-                        <ion-item-divider/>
+                        <ion-item-divider style="margin-bottom: 15px;"/>  
+
+                        <ion-label class="ion-text-wrap"  v-if="showCooker && cooker!=''">
+                                <h2  style="width: 100%;float: left;font-size: 16px;
+                                text-align: left; padding-left: 20px;color: black;">
+                                {{$t('frontend.order.cooker')}}: <strong> {{cooker}} </strong> </h2>
+                        </ion-label>
 
                         <ion-label class="ion-text-wrap">
                                 <h2  style="width: 100%;float: left;font-size: 16px;font-weight: bold;
@@ -150,8 +170,8 @@
                                 {{$t('frontend.order.orderState')}}:  {{showStates}}</h2>
                         </ion-label>
 
-                            <ion-range ref="rangeDualKnobs" dual-knobs="false" min="1" max="5" step="1"
-                            snaps="true" value="1" color="success" disabled="true" ></ion-range>
+                        <ion-range ref="rangeDualKnobs" dual-knobs="false" min="1" max="5" step="1"
+                        snaps="true" value="1" color="success" disabled="true" ></ion-range>
 
                         <ion-item-divider/>        
 
@@ -170,9 +190,9 @@
                             <ion-item-sliding v-for="product in order.Products" v-bind:key="product.ProductId">
 
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap menu-col-6" >
-                                        <h2>{{ product.Name }}</h2>
-                                    </ion-label>
+                                    <div class="ion-text-wrap menu-col-6" >
+                                        <p>{{ product.Name }}</p>
+                                    </div>
                                     <ion-label class="ion-text-wrap menu-col-2">                        
                                         <h3>{{ product.Cant }}</h3>                       
                                     </ion-label>
@@ -192,9 +212,9 @@
                                 </ion-label>
                                 <ion-item-sliding  v-for="charge in order.OtherCharges" v-bind:key="charge.Id">
                                     <ion-item>
-                                        <ion-label class="menu-col-6">
-                                            <h3>{{ charge.Name }} </h3>
-                                        </ion-label>
+                                        <div class="menu-col-6">
+                                            <p>{{ charge.Name }} </p>
+                                        </div>
                                         <ion-label  class="menu-col-2"> </ion-label>
                                         <ion-label  class="menu-col-2"> </ion-label>
                                         <ion-label  class="menu-col-2" >
@@ -257,7 +277,7 @@
 import { add } from "ionicons/icons";
 import { addIcons } from "ionicons";
 import { VBreakpoint } from 'vue-breakpoint-component'
-
+// import { Api } from '../../backoffice/api/api.js';
 
 addIcons({
   "ios-add": add.ios,
@@ -267,13 +287,17 @@ addIcons({
 export default {
     name: 'OrderState', 
     mounted: function(){
-       // this.$refs.rangeDualKnobs.value = { lower: 1, upper: 2 };
+     //  this.$refs.rangeDualKnobs.value = { lower: 1, upper: 2 };
     },
     created: function(){
     this.CustomerName = this.$route.params.CustomerName;      
     this.order = this.$route.params.order;
     this.orderInfo = this.$route.params.orderInfo;  
-    this.showStates = this.order.State
+    this.showCooker = this.$route.params.showCooker;  
+    this.showStates = this.order.State;
+    if(this.order.Cooker != undefined)
+        this.cooker = this.order.Cooker
+
 
         }, 
     data() {
@@ -281,18 +305,31 @@ export default {
             order: [],
             CustomerName: '',
             showStates: '',
-            
-
+            showCooker: false,
+            cooker: '',
         }
     },
     components:{
     VBreakpoint: VBreakpoint
   },
     methods:{
-    allOrder: function(){
-        return this.$router.push({ name: 'ListOrder', params: {customerId: this.order.ClientId, CustomerName: this.CustomerName} })
- 
-    }
+
+        // hasCooker: function(){
+        //     Api.fetchAll("Setting").then(response => {
+        //        if(response.status === 200){
+        //             console.log('Setting Data: '+ JSON.stringify( response.data[0]))
+        //        }
+        //     })
+        //     .catch(e => {
+        //         this.spinner = false
+        //         console.log(e)                
+        //     });
+        // },
+        
+        allOrder: function(){
+            return this.$router.push({ name: 'ListOrder', params: {customerId: this.order.ClientId, CustomerName: this.CustomerName} })
+    
+        }
   }, 
 
 

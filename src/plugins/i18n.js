@@ -371,6 +371,9 @@ const messages = {
                 tableQr: 'Select Table QR',
                 notValidQr: 'Not valid QR',
                 errorRequired: 'Insert required information',
+                notTimeToPick: "You don't have enough time. Our pickup times: ",
+                cookTime: '. With a cooking time of ',
+                minuts: ' minuts.',
                 selectOrderType: 'Select Order Type',
             },
             orderType:{
@@ -405,6 +408,7 @@ const messages = {
                 yourOrders: 'Your Orders ',
                 seeAll: 'See All Orders', 
                 orderState: ' Order State',
+                cooker: ' Cooker',
                 type:'Type',
                 state: 'State', 
             }
@@ -780,6 +784,9 @@ const messages = {
                 tableQr: 'Seleccione el QR de su Mesa',
                 notValidQr: 'Código QR no válido',
                 errorRequired: 'Inserte la información requerida',
+                notTimeToPick: "No cuenta con suficiente tiempo. Nuestros horarios de recogida: ",
+                cookTime: '. Con un tiempo de cocción de ',
+                minuts: ' minutos.',
                 selectOrderType: 'Seleccione Tipo de orden',
             },
             orderType:{
@@ -814,6 +821,7 @@ const messages = {
                 yourOrders: 'Sus órdenes ',
                 seeAll: 'Ver todas sus órdenes',
                 orderState: 'Estado de la orden',
+                cooker: ' Cocinero',
                 type:'Tipo',
                 state: 'Estado',
             }

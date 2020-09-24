@@ -207,6 +207,7 @@ import { EventBus } from './frontend/event-bus';
 import { VBreakpoint } from 'vue-breakpoint-component'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import ProductDetail from './frontend/components/ProductDetail'
+import Moment from 'moment'
 
 
 export default {
@@ -215,6 +216,8 @@ export default {
     msg: String
   },
   mounted: function(){
+
+    this.getConfig();
 
     if (this.$route.query.share)
    {
@@ -322,6 +325,9 @@ export default {
       spinner: false,
       phone:'',
       email:'', 
+      timeToPick: true,
+      rangeToPick: '',
+      rangeToCook: '',
       
       aboutPage:false,
       restaurantName: '',
@@ -452,7 +458,7 @@ export default {
         document.querySelector('ion-menu-controller').close('start')
       },
 
-    show () {
+    show () {      
         this.$modal.show('my-first-modal');
           },
     
@@ -494,7 +500,31 @@ export default {
 
       this.$router.push({path: '/' })   
     },
-    
+  
+    getConfig: function(){
+      this.spinner =true;
+      Api.fetchAll("Setting").then(response => {
+          if(response.status === 200){
+            this.spinner = false;
+
+            let minTimeToCook = response.data[0].MinTimeToCook;            
+            let now = Moment().add(minTimeToCook, 'minutes');                   
+            let max = Moment(response.data[0].PickTo ,'kk:mm')
+            max = max.subtract(1, 'minutes'); 
+
+            this.rangeToPick = response.data[0].PickFrom + ' - ' + response.data[0].PickTo;
+            this.rangeToCook = response.data[0].MinTimeToCook
+          
+            if(now > max)
+              this.timeToPick = false;              
+          }
+      })
+      .catch(e => {
+        this.spinner = false;
+          console.log(e)                
+      });
+    },
+  
     clientUpdateHisData: function(){
       this.closeStart();
       this.spinner =true
@@ -571,6 +601,10 @@ export default {
     },
 
     selectOrder: function(type, table) {
+      if(!this.timeToPick && type == 'PickUp' )
+        return this.alertNoTimeToPick();
+      
+
        return this.$ionic.modalController
         .create({
           component: orderType,
@@ -703,6 +737,25 @@ export default {
           cssClass: 'my-custom-class',
           header: 'Error',
           message: this.$t('frontend.home.errorRequired'),
+          buttons: [                   
+          {
+              text: this.$t('frontend.home.acept'),
+              handler: () => {                                 
+                            
+              },
+          },
+          ],
+      })
+      .then(a => a.present())
+                  
+    },
+
+    alertNoTimeToPick(){
+      return  this.$ionic.alertController
+      .create({
+          cssClass: 'my-custom-class',
+          header: 'Info',
+          message: this.$t('frontend.home.notTimeToPick') + this.rangeToPick + this.$t('frontend.home.cookTime') + this.rangeToCook + this.$t('frontend.home.minuts'),
           buttons: [                   
           {
               text: this.$t('frontend.home.acept'),

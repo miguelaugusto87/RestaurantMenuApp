@@ -109,7 +109,8 @@ export default {
     this.clientId = this.$route.params.customerId; 
     this.name = this.$route.params.CustomerName; 
 
-    this.getOrders();   
+    this.getOrders(); 
+    this.hasCooker();  
   },
    components:{
     VBreakpoint: VBreakpoint
@@ -119,11 +120,23 @@ export default {
       clientId: '',  
       orders: [],
       name: '',
+      showCooker: false,
       spinner: false
     }
   }, 
 
   methods: {
+
+    hasCooker: function(){
+      Api.fetchAll("Setting").then(response => {
+          if(response.status === 200){
+              this.showCooker = response.data[0].ShowCooker;
+          }
+      })
+      .catch(e => {
+          console.log(e)                
+      });
+    },
 
     getOrders: function(){
       this.spinner = true
@@ -153,15 +166,15 @@ export default {
         })   
     },
     seeDetail: function(order){
-        let orderInfo = '';
-        if(order.OrderType == 'Delivery')
-            orderInfo = order.AddressToDeliver
-        if(order.OrderType == 'PickUp')
-            orderInfo = order.HourToPick
-        if(order.OrderType == 'On Table')
-            orderInfo = order.tableService
-        
-        return this.$router.push({ name: 'OrderState', params: {order: order, CustomerName: this.name, orderInfo: orderInfo } })
+      let orderInfo = '';
+      if(order.OrderType == 'Delivery')
+          orderInfo = order.AddressToDeliver
+      if(order.OrderType == 'PickUp')
+          orderInfo = order.HourToPick
+      if(order.OrderType == 'On Table')
+          orderInfo = order.tableService
+      
+      return this.$router.push({ name: 'OrderState', params: {order: order, CustomerName: this.name, orderInfo: orderInfo, showCooker: this.showCooker } })
 
     },
 
