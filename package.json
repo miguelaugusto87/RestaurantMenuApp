@@ -22,7 +22,7 @@
     "ionic-native": "^2.9.0",
     "ionicons": "^4.6.3",
     "libphonenumber-js": "^1.7.57",
-    "moment": "^2.28.0",
+    "moment": "^2.29.0",
     "qrcode.vue": "^1.7.0",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
