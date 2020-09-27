@@ -5,6 +5,9 @@ import store from '../../main.js'
 
 Vue.use(VueRouter)
 
+
+
+
   const routes = [
   {
     path: '/home/:cart?',
@@ -396,6 +399,32 @@ Vue.use(VueRouter)
     }
   },
   {
+    path: '/funDataSettingsForm/:settingId?',
+    name: 'FunSettingForm',
+    component: () => import(/* webpackChunkName: "about" */ '../views/FunDataSettingForm.vue'),
+    beforeEnter: (to, from, next) =>{
+      if (store.state.authenticated == false)
+      {
+        next("/");
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/ColourDataSettingsForm/:settingId?',
+    name: 'ColourSettingForm',
+    component: () => import(/* webpackChunkName: "about" */ '../views/ColourDataSettingForm.vue'),
+    beforeEnter: (to, from, next) =>{
+      if (store.state.authenticated == false)
+      {
+        next("/");
+      } else {
+        next();
+      }
+    }
+  },
+  {
     path: '/aboutDataSettings',
     name: 'About',
     // route level code-splitting
@@ -431,5 +460,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+
 
 export default router

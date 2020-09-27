@@ -6,10 +6,10 @@
       </div>
 
       <div v-if="!spinner && clientId !=''">        
-          <ion-button :disabled="isDelivery" :color="isDelivery ? 'primary' : 'light'" @click="deliveryAction">{{$t('frontend.app.deliver')}}</ion-button>
-          <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" v-if="selectPickHour" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
-          <ion-button :disabled="isPick" :color="isPick ? 'primary' : 'light'" v-if="!selectPickHour" @click=" sinPickAction ">{{$t('frontend.app.pickup')}}</ion-button>
-          <ion-button :disabled="isTable" :color="isTable ? 'primary' : 'light'" @click="show">{{$t('frontend.app.table')}}</ion-button> 
+          <ion-button :disabled="isDelivery" color="primary" @click="deliveryAction">{{$t('frontend.app.deliver')}}</ion-button>
+          <ion-button :disabled="isPick" color="secondary" v-if="selectPickHour" @click="pickAction">{{$t('frontend.app.pickup')}}</ion-button>
+          <ion-button :disabled="isPick" color="secondary" v-if="!selectPickHour" @click=" sinPickAction ">{{$t('frontend.app.pickup')}}</ion-button>
+          <ion-button :disabled="isTable" color="tertiary" @click="show">{{$t('frontend.app.table')}}</ion-button> 
           <ion-button color="primary"  @click="productDetails">{{cart.length}}<ion-icon name="cart"></ion-icon></ion-button>
       </div>
      
@@ -169,7 +169,7 @@ export default {
       isTable: false,
       orderSelected: true,
       clientId:'',
-      addressToDeliver:'',
+      addressToDeliver:'',      
       hourToPick: '',
       tabeService:'',
       products: [],      
@@ -179,20 +179,19 @@ export default {
       spinner: false,
       timeToPick: true,
       rangeToPick: '',
-      rangeToCook: '',
-      rangeMssg: '',
       minHour: '12:00',
       maxHour:'20:00',
-      
+      minTimeToCook: '',
       orderType:'',     
       CustomerName :'',     
       tableService:'',
       order:{},
-      clientHasOrder: false,  
-
+      clientHasOrder: false,
       showProduct: false,
       categoryName: '',
       selectPickHour: false,
+      deliveryZone:'',
+      zipCodes:''
     }
   }, 
   components:{
@@ -207,33 +206,37 @@ export default {
       Api.fetchAll("Setting").then(response => {
         this.spinner = false;
           if(response.status === 200){
-              console.log('Setting Data: ' + JSON.stringify(response.data[0]))
-              this.selectPickHour = response.data[0].SelectPickHour;
+            console.log('Setting Data: ' + JSON.stringify(response.data[0]))
+            this.selectPickHour = response.data[0].SelectPickHour;
 
-              let minTimeToCook = response.data[0].MinTimeToCook;            
-              let now = Moment().add(minTimeToCook, 'minutes');  
-              let min = Moment(response.data[0].PickFrom ,'kk:mm')                  
-              let max = Moment(response.data[0].PickTo ,'kk:mm')
-              max = max.subtract(1, 'minutes'); 
+            this.deliveryZone = response.data[0].DeliveryZone
+            this.zipCodes = response.data[0].ZipCodes
 
-              this.minHour =  min.format('kk:mm');
-              this.maxHour = max.format('kk:mm');
-
-              this.rangeToPick = response.data[0].PickFrom + ' - ' + response.data[0].PickTo;
-              this.rangeToCook = response.data[0].MinTimeToCook
-            
-              if(now > max)
-                this.timeToPick = false;
-              if(now > min && now < max)
-                this.minHour = now.format('kk:mm')
-
-              this.rangeMssg = this.minHour + ' - ' + this.maxHour;
+            this.minTimeToCook = response.data[0].MinTimeToCook;
+            this.minHour = response.data[0].PickFrom;
+            this.maxHour = response.data[0].PickTo;
+              
+            this.checkPickTime();
           }
       })
       .catch(e => {
         this.spinner = false;
           console.log(e)                
       });
+    },
+
+    checkPickTime(){
+      let now = Moment().add(this.minTimeToCook, 'minutes'); 
+
+      let min = Moment(this.minHour ,'kk:mm')                  
+      let max = Moment(this.maxHour ,'kk:mm')
+      if(now > max)
+        this.timeToPick = false;
+      if(now > min && now < max)
+        this.minHour = now.format('kk:mm')
+
+      // this.minHour =  min.format('kk:mm');
+      // this.maxHour = max.format('kk:mm');
     },
 
     show () {
@@ -327,7 +330,7 @@ export default {
     },
      
     productsByCategory(categoryId, categoryName){       
-      if(this.orderType === '')
+      if(!this.orderType)
       {
          return this.alertSelectOrderType();
       }
@@ -381,11 +384,11 @@ export default {
             },
           },
           {
-            text: this.$t('frontend.home.checkout'),
+            text: this.$t('frontend.home.checkout') ,
             handler: () => {   
               console.log('Order in Home' + JSON.stringify(this.order)     )
               if(this.cart.length > 0) 
-                this.$router.push({ name: 'Order', params: {cart: this.cart, order: this.order  } })
+                this.$router.push({ name: 'Order', params: {cart: this.cart, order: this.order, minHour: this.minHour, maxHour: this.maxHour, zipCodes:this.zipCodes  } })
             },
           },
         ],
@@ -403,7 +406,8 @@ export default {
         cssClass: 'my-custom-class',
         header: this.$t('frontend.home.deliverDetail') ,         
         inputs: [  
-          { type:'text', name: 'address',id:'address-id',placeholder: this.$t('frontend.home.address') },         
+          { type:'text', name: 'address',id:'address-id',placeholder: this.$t('frontend.home.address') }, 
+          { type:'number', name: 'zipCode',id:'code-id',placeholder: this.$t('frontend.orderType.code') },        
         ],        
         buttons: [
           {text: this.$t('frontend.home.cancel'),role: 'cancel', cssClass: 'secondary',
@@ -414,11 +418,19 @@ export default {
           {
             text: this.$t('frontend.home.acept'),
             handler: (data) => {
-                if(data.address==='')
-                  return this.alertRequiredDatas();              
+                if(data.address==='' || data.zipCode ==='')
+                  return this.alertRequiredDatas(); 
+                  
+              
+              
+              if(this.zipCodes.length > 0){
+                  const zip = this.zipCodes.filter(zc => zc === data.zipCode);
+                  if(!zip.length >0)
+                    return this.alertCodeNotValid();     
+                }
               
               this.orderType = "Delivery"
-              this.address = data.address
+              this.address = data.address +' ZipCode: '+ data.zipCode;
               this.changeOrderButton();  
               this.order.OrderType = "Delivery";
               this.order.AddressToDeliver = this.address; 
@@ -439,7 +451,7 @@ export default {
     },
 
     pickAction() {
-      this.getConfig(); 
+       this.checkPickTime();
 
        if(!this.timeToPick )
         return this.alertNoTimeToPick();
@@ -448,7 +460,7 @@ export default {
       .create({
         cssClass: 'my-custom-class',
         header: this.$t('frontend.home.pickupDetail'),
-        message: "Horario de recogida disponible: " + this.rangeMssg,
+        message: "Horario de recogida disponible: " + this.minHour + ' - ' + this.maxHour,
         inputs: [         
           {name: 'hourPick',  type: 'time', value:this.minHour, min: "14:00", max: '15:18' },
         ],
@@ -475,7 +487,8 @@ export default {
               this.hourToPick = data.hourPick
               this.changeOrderButton(); 
               this.order.OrderType = "PickUp";
-              this.order.HourToPick = this.hourToPick;   
+              this.order.HourToPick = this.hourToPick;  
+              this.order.ClientId = this.clientId,  
               
               EventBus.$emit('HourToPick', this.hourToPick );      
               EventBus.$emit('orderType', 'PickUp' ); 
@@ -496,7 +509,8 @@ export default {
         this.hourToPick = ''
         this.changeOrderButton(); 
         this.order.OrderType = "PickUp";
-        this.order.HourToPick = this.hourToPick;         
+        this.order.HourToPick = this.hourToPick; 
+        this.order.ClientId = this.clientId,         
         EventBus.$emit('HourToPick', this.hourToPick );      
         EventBus.$emit('orderType', 'PickUp' ); 
         EventBus.$emit('updateOrder', this.order );
@@ -518,7 +532,8 @@ export default {
           this.isPick = false;
           this.isTable = true;             
           this.order.OrderType = "On Table";
-          this.order.tableService = this.tableService;        
+          this.order.tableService = this.tableService; 
+          this.order.ClientId = this.clientId,        
           EventBus.$emit('orderType', 'On Table' );
           EventBus.$emit('updateOrder', this.order );
           this.changeOrderButton();                  
@@ -557,7 +572,9 @@ export default {
       .create({
           cssClass: 'my-custom-class',
           header: 'Info',
-          message: this.$t('frontend.home.notTimeToPick') + this.rangeToPick + this.$t('frontend.home.cookTime') + this.rangeToCook + this.$t('frontend.home.minuts'),
+          message: this.$t('frontend.home.notTimeToPick') + 
+          this.minHour +' - '+ this.maxHour +
+           this.$t('frontend.home.cookTime') + this.minTimeToCook + this.$t('frontend.home.minuts'),
           buttons: [                   
           {
               text: this.$t('frontend.home.acept'),
@@ -570,7 +587,8 @@ export default {
       .then(a => a.present())
                   
     },
-     alertSelectOrderType(){
+  
+    alertSelectOrderType(){
       return  this.$ionic.alertController
       .create({
           cssClass: 'my-custom-class',
@@ -609,7 +627,7 @@ export default {
                   
     },
 
-    changeOrderButton: function(){
+     changeOrderButton: function(){
       console.log('order type: '+ this.orderType)
        if(this.orderType === 'Delivery'){         
         this.isDelivery = true;
@@ -630,7 +648,26 @@ export default {
        console.log('on table: ' + this.isTable)
          console.log('pick: ' + this.isPick)
          console.log('delivery: ' + this.isDelivery)
-    }
+    },
+
+  alertCodeNotValid(){
+    return  this.$ionic.alertController
+    .create({
+        cssClass: 'my-custom-class',
+        header: 'Error',
+        message: this.$t('frontend.home.zipCodeNotValid') + ' << ' + this.deliveryZone + ' >>',
+        buttons: [                   
+        {
+          text: this.$t('frontend.home.acept'),
+          handler: () => {                                 
+                        
+          },
+        },
+        ],
+    })
+    .then(a => a.present())
+                
+  },
 
   },
 };

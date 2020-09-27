@@ -4,7 +4,7 @@
     <ion-card-title>
       {{$t('frontend.order.yourOrders')}}
         <ion-label class="ion-text-wrap">           
-            <ion-button fill="outline" v-if="!spinner" style="float: right; margin-right: 10px;" @click="addOrder"> + </ion-button>
+            <ion-button fill="outline" v-if="!spinner" style="float: right; margin-right: 10px;" @click="addOrder"> +  </ion-button>
         </ion-label>
       </ion-card-title>
     

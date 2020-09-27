@@ -39,6 +39,8 @@
                 </div> 
               </ion-item>     
                  
+              <ion-item v-if="clientId ==''" @click="goInit">{{$t('frontend.menu.init')}}</ion-item>
+              <ion-item v-if="clientId !=''" @click="goRestar">{{$t('frontend.menu.init')}}</ion-item>
               <ion-item @click="goAbout">{{$t('frontend.menu.about')}}</ion-item> 
               <ion-item v-if="clientId !=''" @click="goHome">{{$t('frontend.menu.oferts')}}</ion-item>
               <ion-item v-if="clientId !=''" @click="clientUpdateHisData">{{$t('frontend.menu.edit')}}</ion-item>         
@@ -75,20 +77,22 @@
            <!-- <ion-item v-if="!getAuthenticated" @click="closeEnd"><router-link to="/login" >{{ $t('backoffice.options.login') }}</router-link></ion-item> -->
            <ion-item v-else @click="logOut"><router-link to="/login" >{{ $t('backoffice.options.logout') }}</router-link></ion-item>
 
-           <ion-item v-if="accessToControlPanel()"><router-link to="/controlPanel" >{{ $t('backoffice.options.controlPanel') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewMenu')"><router-link to="/menu" >{{ $t('backoffice.options.manageMenus') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewOrder')"><router-link to="/order" >{{ $t('backoffice.options.viewOrders') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewCategory')"><router-link to="/category" >{{ $t('backoffice.options.manageCategories') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewProduct')"><router-link to="/product" >{{ $t('backoffice.options.manageProducts') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewCustomer')"><router-link to="/customer" >{{ $t('backoffice.options.manageCustomers') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewTable')"><router-link to="/table" >{{ $t('backoffice.options.manageTables') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewTax')"><router-link to="/tax" >{{ $t('backoffice.options.manageTaxes') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewShipping')"><router-link to="/shipping" >{{ $t('backoffice.options.manageShippings') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewOtherCharge')"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewUser')"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canViewRole')"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
-           <ion-item v-if="hasPermission('canChangeSetting')"><router-link to="/aboutDataSettings" >{{ $t('backoffice.options.manageAboutSettings') }}</router-link></ion-item>
+           <ion-item v-if="accessToControlPanel()" @click="closeEnd()"><router-link to="/controlPanel" >{{ $t('backoffice.options.controlPanel') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewMenu')" @click="closeEnd()"><router-link to="/menu" >{{ $t('backoffice.options.manageMenus') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewOrder')" @click="closeEnd()"><router-link to="/order" >{{ $t('backoffice.options.viewOrders') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewCategory')" @click="closeEnd()"><router-link to="/category" >{{ $t('backoffice.options.manageCategories') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewProduct')" @click="closeEnd()"><router-link to="/product" >{{ $t('backoffice.options.manageProducts') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewCustomer')" @click="closeEnd()"><router-link to="/customer" >{{ $t('backoffice.options.manageCustomers') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewTable')" @click="closeEnd()"><router-link to="/table" >{{ $t('backoffice.options.manageTables') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewTax')" @click="closeEnd()"><router-link to="/tax" >{{ $t('backoffice.options.manageTaxes') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewShipping')" @click="closeEnd()"><router-link to="/shipping" >{{ $t('backoffice.options.manageShippings') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewOtherCharge')" @click="closeEnd()"><router-link to="/otherCharge" >{{ $t('backoffice.options.manageOtherCharges') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewUser')" @click="closeEnd()"><router-link to="/user" >{{ $t('backoffice.options.manageUsers') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canViewRole')" @click="closeEnd()"><router-link to="/role" >{{ $t('backoffice.options.manageRoles') }}</router-link></ion-item>
+           <ion-item v-if="hasPermission('canChangeSetting')" @click="closeEnd()"><router-link to="/aboutDataSettings" >{{ $t('backoffice.options.manageAboutSettings') }}</router-link></ion-item>
            <ion-item v-if="hasPermission('canChangeSetting')"><a @click="manageBasicSettings()">{{ $t('backoffice.options.manageBasicSettings') }}</a></ion-item>
+           <ion-item v-if="hasPermission('canChangeSetting')"><a @click="manageFunSettings()">{{ $t('backoffice.options.manageFunSettings') }}</a></ion-item>
+           <ion-item v-if="hasPermission('canChangeSetting')"><a @click="manageColourSettings()">{{ $t('backoffice.options.manageColourSettings') }}</a></ion-item>
         </ion-content>
       </ion-menu>
 
@@ -109,15 +113,26 @@
 
      
       
-      <v-breakpoint v-if="clientId ==='' && !getAuthenticated && !aboutPage" style="padding: 20px;">
+
+    
+    
+
+
+      <div v-if="spinner">
+        <ion-spinner  name="lines" class="spinner"></ion-spinner>
+      </div>
+
+    <ion-content v-if="!spinner">
+
+     <v-breakpoint v-if="clientId ==='' && !getAuthenticated " style="padding: 20px;">
       <div slot-scope="scope">
 
         <span v-if="scope.isSmall || scope.isMedium || scope.noMatch" > 
           <div >
               <h3>{{$t('frontend.app.selectOrder')}}</h3>
-              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
+              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="primary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
               <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="selectOrder('PickUp', '')">{{$t('frontend.app.pickup')}}</ion-button>
-              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="secondary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
+              <ion-button style="margin: 12px 0;" expand="block" size="large" strong color="tertiary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
           </div>
 
           <modal name="my-first-modal" width="80%" height="80%">
@@ -136,9 +151,9 @@
         <span v-if="scope.isLarge || scope.isXlarge"> 
            <div >
               <h3>{{$t('frontend.app.selectOrder')}}</h3>
-              <ion-button style="margin: 12px;" size="large" round strong color="secondary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
+              <ion-button style="margin: 12px;" size="large" round strong color="primary" @click="selectOrder('Delivery', '')">{{$t('frontend.app.deliver')}}</ion-button>
               <ion-button style="margin: 12px;" size="large" strong color="secondary" @click="selectOrder('PickUp', '')">{{$t('frontend.app.pickup')}}</ion-button>
-              <ion-button style="margin: 12px;" size="large" strong color="secondary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
+              <ion-button style="margin: 12px;" size="large" strong color="tertiary" @click="show">{{$t('frontend.app.table')}}</ion-button>   
           </div>  
 
           <modal name="my-first-modal" :width="'50%'" height="50%">
@@ -157,22 +172,12 @@
         </span>
       </div>
     </v-breakpoint>
-    
-    
 
-
-      <div v-if="spinner">
-        <ion-spinner  name="lines" class="spinner"></ion-spinner>
-      </div>
-
-    <ion-content v-if="!spinner">
       <router-view/>
-           
-
     </ion-content>
 
     <ion-footer class="ion-no-border">
-      <ion-toolbar v-if="!aboutPage">
+      <ion-toolbar >
         <ion-title class="menu-col-12">Solution For Success</ion-title>
       </ion-toolbar>
     </ion-footer>
@@ -328,8 +333,8 @@ export default {
       timeToPick: true,
       rangeToPick: '',
       rangeToCook: '',
+    
       
-      aboutPage:false,
       restaurantName: '',
       restaurantPhone: '',
       restaurantLogo: '',
@@ -340,6 +345,7 @@ export default {
       restaurantTwitter:'',
       restaurantInstagram:'',
       restaurantYoutube: '',
+
     }
   }, 
   components:{
@@ -422,6 +428,7 @@ export default {
     },
 
     manageBasicSettings(){
+            this.closeEnd();
             Api.fetchAll('Restaurant').then(response => {
             // console.log(response.data)
                 let basicSettings = [];
@@ -432,6 +439,47 @@ export default {
                         name: 'BasicSettingForm',
                         params: {
                             "settingId": basicSettings[basicSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
+        },
+
+    manageFunSettings(){
+            this.closeEnd();
+            Api.fetchAll('Setting').then(response => {
+            // console.log(response.data)
+                let funSettings = [];
+                funSettings = response.data;
+                if (funSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'FunSettingForm',
+                        params: {
+                            "settingId": funSettings[funSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
+        },
+    manageColourSettings(){
+            this.closeEnd();
+            Api.fetchAll('Setting').then(response => {
+            // console.log(response.data)
+                let colSettings = [];
+                colSettings = response.data;
+                if (colSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'ColourSettingForm',
+                        params: {
+                            "settingId": colSettings[colSettings.length - 1]._id,
                         }
                     });
                 }
@@ -507,6 +555,11 @@ export default {
           if(response.status === 200){
             this.spinner = false;
 
+            var allStyles= response.data[0].AllStyles;
+            document.querySelector('style').innerHTML += allStyles;
+
+            
+
             let minTimeToCook = response.data[0].MinTimeToCook;            
             let now = Moment().add(minTimeToCook, 'minutes');                   
             let max = Moment(response.data[0].PickTo ,'kk:mm')
@@ -526,7 +579,7 @@ export default {
     },
   
     clientUpdateHisData: function(){
-      this.closeStart();
+      // this.closeStart();
       this.spinner =true
       Api.fetchById(this.modelName, this.clientId)
         .then(response => {
@@ -623,8 +676,10 @@ export default {
               placeholderName: this.$t('frontend.orderType.name'),
               placeholderPhone: this.$t('frontend.orderType.phone'),
               placeholderAddress: this.$t('frontend.orderType.address'),
+              placeholderCode: this.$t('frontend.orderType.code'),
               placeholderPickUp: this.$t('frontend.orderType.pickOut'),
               requiredData: this.$t('frontend.home.errorRequired'),
+              zipCodeNotValid: this.$t('frontend.home.zipCodeNotValid'),
               contactedBy: this.$t('frontend.orderType.contactedBy')
             },
           },
@@ -641,9 +696,50 @@ export default {
       return this.$router.push({ name: 'Home', params: {cart:this.cart, order: this.order, clientId: this.clientId } })
     },
 
+    goInit: function(){
+      this.closeStart();
+      return this.$router.push({ name: 'AppVue' })
+    },
+
+    goRestar: function(){
+       return  this.$ionic.alertController
+      .create({
+          cssClass: 'my-custom-class',
+          header: 'Info',
+          message: this.$t('frontend.home.alertDeleteData'),
+          buttons: [                   
+          {
+              text: this.$t('frontend.home.cancel'),
+              handler: () => {   
+              },
+          },
+          {
+              text: this.$t('frontend.home.acept'),
+              handler: () => {    
+                this.closeStart();
+                this.orderType='',
+                this.isDelivery= false,
+                this.isPick= false,
+                this.isTable= false,
+                this.orderSelected= false,
+                this.clientId='',
+                this.CustomerName ='',
+                this.prod= [],
+                this.cart= [],
+                this.order={},
+                this.clientHasOrder= false,
+
+                  this.$router.push({ name: 'AppVue' })                             
+                            
+              },
+          },
+          ],
+      })
+      .then(a => a.present())
+    },
+
     goAbout: function(){
       this.closeStart();
-      this.aboutPage = true;
       return this.$router.push({ name: 'About' })
     },
 
@@ -730,8 +826,8 @@ export default {
       }
 
     },
-
-    alertRequiredDatas(){
+    
+   alertRequiredDatas(){
       return  this.$ionic.alertController
       .create({
           cssClass: 'my-custom-class',
@@ -926,7 +1022,7 @@ export default {
 </script>
 
 
-<style>
+<style id="all-menu-styles">
 
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
 
@@ -960,7 +1056,7 @@ border-bottom: 1px solid #da0f0f;
   color: #3880ff;
 }
 .spinner {
-    margin-top: 50%;
+    margin-top: 10%;
     display: inline-block;
     position: relative;
     width: 70px;
@@ -1001,6 +1097,10 @@ border-bottom: 1px solid #da0f0f;
   width: 30px;
   height: 30px;
   margin: 2px 10px;
-
 }
+ion-button{
+  max-height: 48px !important;
+}
+
+
 </style>

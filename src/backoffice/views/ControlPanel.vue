@@ -16,6 +16,8 @@
             <router-link to="/role"><ion-button v-if="hasPermission('canViewRole')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageRoles') }}</ion-button></router-link>
             <router-link to="/aboutDataSettings"><ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary">{{ $t('backoffice.options.manageAboutSettings') }}</ion-button></router-link>
             <ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary" @click="manageBasicSettings()">{{ $t('backoffice.options.manageBasicSettings') }}</ion-button>
+            <ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary" @click="manageFunSettings()">{{ $t('backoffice.options.manageFunSettings') }}</ion-button>
+            <ion-button v-if="hasPermission('canChangeSetting')" expand="full" strong color="tertiary" @click="manageColourSettings()">{{ $t('backoffice.options.manageColourSettings') }}</ion-button>
         </div>
     </ion-content>
 </template>
@@ -93,6 +95,44 @@ export default {
                         name: 'BasicSettingForm',
                         params: {
                             "settingId": basicSettings[basicSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
+        },
+        manageFunSettings(){
+            Api.fetchAll('Setting').then(response => {
+            // console.log(response.data)
+                let funSettings = [];
+                funSettings = response.data;
+                if (funSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'FunSettingForm',
+                        params: {
+                            "settingId": funSettings[funSettings.length - 1]._id,
+                        }
+                    });
+                }
+            })
+            .catch(e => {
+            console.log(e)
+            });
+        },
+        manageColourSettings(){
+            Api.fetchAll('Setting').then(response => {
+            // console.log(response.data)
+                let colSettings = [];
+                colSettings = response.data;
+                if (colSettings.length > 0)
+                {
+                    this.$router.push({
+                        name: 'ColourSettingForm',
+                        params: {
+                            "settingId": colSettings[colSettings.length - 1]._id,
                         }
                     });
                 }

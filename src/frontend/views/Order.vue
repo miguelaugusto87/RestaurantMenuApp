@@ -24,9 +24,13 @@
                                 <h3 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;">  {{CustomerName}}</h3>
 
                                 <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}} </h3>
-                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
-                                <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
+                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :max="maxHour" :min="minHour"  :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
                                 <ion-label v-if="order.OrderType=='On Table'" style=" float: left;text-align: left;" class="subtitles-order menu-col-4">{{ orderInfo}}</ion-label>
+                                <ion-input :value="getDeliveryInfo('address')" v-if="order.OrderType=='Delivery'" @change="changeOrderInfo( $event.target.value )" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
+
+                                <h3 class="subtitles-order menu-col-4" v-if="order.OrderType=='Delivery'" style=" padding: 10px; margin: 0; float: left;"> ZipCode </h3>
+                                <ion-input type="number" :value="zipCode" v-if="order.OrderType=='Delivery'"   @change="changeZipCode( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
+
                             </ion-card>
 
                                     
@@ -57,10 +61,10 @@
                                        
 
                                         <div class="ion-text-wrap menu-col-4" style="    padding-right: 10px;" >
-                                            <ion-input type="number"  style="border: 1px solid grey; text-align:center" 
-                                            :value="product.Cant" 
-                                            @input="product.Cant = $event.target.value" 
-                                            @change="getOtherCharges"
+                                            <ion-input type="number"  style="border: 1px solid grey; text-align:center"                                               
+                                            @input="$event.target.value > 0 ? product.Cant = $event.target.value : product.Cant = 1" 
+                                            :value="product.Cant"                                            
+                                            @change="getOtherCharges, product.Cant = validateCant( $event.target.value)"                                           
                                             ></ion-input>
                                         </div>
                                             
@@ -152,6 +156,13 @@
                                 </ion-item>
 
                                 <ion-item>
+                                    <div class="menu-col-6" ><p>{{$t('frontend.order.ccode')}}</p></div> 
+                                    <ion-input type="number" required=true  class="menu-col-6"
+                                    :value="cardCode" @input="cardCode = $event.target.value"
+                                     ></ion-input>
+                                </ion-item>
+
+                                <ion-item>
                                     <div class="menu-col-8" ><p>{{$t('frontend.order.expcard')}}</p></div>  
                                     <ion-datetime class="menu-col-4" display-format="YYYY-MM" :max="dateTodaymax + 4 " 
                                     :min="dateTodaymin" required=true @ionChange="expirationCard = $event.target.value"> </ion-datetime>
@@ -162,7 +173,7 @@
                             <div style="padding: 20px 0; text-align: center">
 
                                 <ion-button  fill="outline" @click="goHome">{{$t('frontend.home.cancel')}}</ion-button>
-                                <ion-button  fill="outline"  @click="sendOrder">{{$t('frontend.order.pay')}}</ion-button>
+                                <ion-button :disabled="existError== true" fill="outline"  @click="sendOrder">{{$t('frontend.order.pay')}}</ion-button>
 
                             </div>
 
@@ -187,9 +198,13 @@
                                 <h3 class="subtitles-order menu-col-8" style=" padding: 5px 10px; margin: 0;float: left;">  {{CustomerName}}</h3>
 
                                 <h3 class="subtitles-order menu-col-4" style=" padding: 10px; margin: 0; float: left;"> {{order.OrderType}} </h3>
-                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
-                                <ion-input :value="orderInfo" v-if="order.OrderType=='Delivery'"   @change="changeOrderInfo( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-4" ></ion-input>
+                                <ion-datetime v-if="order.OrderType=='PickUp' && selectPickHour" display-format="HH:mm" :max="maxHour" :min="minHour"  :value="orderInfo" @ionChange="changeOrderInfo( $event.target.value)" class="subtitles-order menu-col-8" style="width: 70%; float: left;text-align: left;"></ion-datetime>
                                 <ion-label v-if="order.OrderType=='On Table'" style=" float: left;text-align: left;" class="subtitles-order menu-col-4">{{ orderInfo}}</ion-label>
+                                <ion-input :value="getDeliveryInfo('address')" v-if="order.OrderType=='Delivery'" @change="changeOrderInfo( $event.target.value )" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
+
+                                <h3 class="subtitles-order menu-col-4" v-if="order.OrderType=='Delivery'" style=" padding: 10px; margin: 0; float: left;"> ZipCode </h3>
+                                <ion-input type="number" :value="zipCode" v-if="order.OrderType=='Delivery'"   @change="changeZipCode( $event.target.value)" style="float: left;text-align: left;" class="subtitles-order menu-col-8" ></ion-input>
+
                             </ion-card>
 
                                     
@@ -216,10 +231,10 @@
                                         </ion-label>   
 
                                         <div class="ion-text-wrap menu-col-2" style="    padding-right: 10px;" >
-                                            <ion-input type="number"  style="border: 1px solid grey; text-align:center" 
-                                            :value="product.Cant" 
-                                            @input="product.Cant = $event.target.value" 
-                                            @change="getOtherCharges"
+                                             <ion-input type="number"  style="border: 1px solid grey; text-align:center"                                               
+                                            @input="$event.target.value > 0 ? product.Cant = $event.target.value : product.Cant = 1" 
+                                            :value="product.Cant"                                            
+                                            @change="getOtherCharges, product.Cant = validateCant( $event.target.value)"                                           
                                             ></ion-input>
                                         </div>
                                             
@@ -312,6 +327,13 @@
                                     @change="validateCard($event.target.value)" ></ion-input>
                                 </ion-item>
 
+                                  <ion-item>
+                                    <div class="menu-col-6" ><p>{{$t('frontend.order.ccode')}}</p></div> 
+                                    <ion-input type="number" required=true  class="menu-col-6"
+                                    :value="cardCode" @input="cardCode = $event.target.value"
+                                     ></ion-input>
+                                </ion-item>
+
                                 <ion-item>
                                     <ion-label class="menu-col-6" >{{$t('frontend.order.expcard')}}</ion-label>  
                                     <ion-datetime class="menu-col-6" display-format="YYYY-MM" :max="dateTodaymax + 4 " 
@@ -323,7 +345,7 @@
                             <div style="padding: 20px 0; text-align: center">
 
                                 <ion-button  fill="outline" @click="goHome">{{$t('frontend.home.cancel')}}</ion-button>
-                                <ion-button  fill="outline"  @click="sendOrder">{{$t('frontend.order.pay')}}</ion-button>
+                                <ion-button :disabled="existError== true" fill="outline"  @click="sendOrder">{{$t('frontend.order.pay')}}</ion-button>
 
                             </div>
 
@@ -364,6 +386,9 @@ export default {
    created: function(){
        this.cart = this.$route.params.cart;      
        this.order = this.$route.params.order; 
+       this.minHour = this.$route.params.minHour; 
+       this.maxHour = this.$route.params.maxHour; 
+       this.allCodes = this.$route.params.zipCodes
 
        console.log('Order in Order.vue' + JSON.stringify(this.order))
        
@@ -376,10 +401,12 @@ export default {
    },
    data () {
     return {
-     barcode:'',
+     barcode:'',        
       modelName: 'Order',
       cart: [],
       order:{},
+      minHour: '',
+      maxHour: '',
       categories: [],
       products: [],
       note:'',
@@ -396,8 +423,12 @@ export default {
       dateTodaymin: new Date().toISOString().substr(0, 7),
       dateTodaymax:  new Date().getFullYear(),
       cardNumber:'',
+      cardCode: '',
       expirationCard:'',
       selectPickHour: false,
+      zipCode: '',
+      allCodes: [],
+      
     }
   }, 
   computed: {
@@ -444,7 +475,7 @@ export default {
     } ,
     
     sendOrder:  function(){
-        if(this.cardNumber ==='' || this.expirationCard === '')
+        if(this.cardNumber ==='' || this.expirationCard === '' || this.cardCode=== '')
                   return this.alertRequiredDatas();
 
         this.spinner = true
@@ -515,6 +546,7 @@ export default {
                     "creditCard": {
                         "cardNumber": this.cardNumber,
                         "expirationDate": this.expirationCard.substr(0, 7),
+                        "cardCode":this.cardCode,
                     },
                 },    
                 "lineItems": listItems,
@@ -616,8 +648,11 @@ export default {
     },
 
     getOrderInfo: function(){
-        if(this.order.OrderType == 'Delivery')
+        if(this.order.OrderType == 'Delivery'){
             this.orderInfo = this.order.AddressToDeliver;
+            const deliveryAdress = this.orderInfo.split(' ZipCode: ');
+            this.zipCode = deliveryAdress[1];        
+        }
         if(this.order.OrderType == 'PickUp')
             this.orderInfo = this.order.HourToPick;
         if(this.order.OrderType == 'On Table')
@@ -719,8 +754,17 @@ export default {
     },
 
     changeOrderInfo: function(event){
-         if(this.order.OrderType == 'Delivery')
-          this.order.AddressToDeliver = event;
+
+        if(!event)
+            return this.alertRequiredDatas();
+
+            console.log(this.zipCode)
+
+         if(this.order.OrderType == 'Delivery'){
+            this.order.AddressToDeliver = event +' ZipCode: '+ this.zipCode;
+            event = this.order.AddressToDeliver;
+         }
+          
          if(this.order.OrderType == 'PickUp')
           this.order.HourToPick = event;
         if(this.order.OrderType == 'On Table')
@@ -779,7 +823,69 @@ export default {
         }   
         
     },
+    
+    getDeliveryInfo(value){
 
+        const deliveryAdress = this.orderInfo.split(' ZipCode: ');
+        if(value =='code'){
+            return deliveryAdress[1]
+        }
+        if(value =='address'){
+            return deliveryAdress[0]
+        }
+    
+    },
+    
+    changeZipCode(value){
+        if(this.allCodes.length > 0){
+            const zip = this.allCodes.filter(zc => zc === value);
+            if(!zip.length >0){
+                 return this.alertCodeNotValid();  
+            }
+              
+        }
+
+        const deliveryAdress = this.orderInfo.split(' ZipCode: ');
+        this.orderInfo = deliveryAdress[0] +' ZipCode: '+ value;
+        this.order.AddressToDeliver = this.orderInfo;
+
+        console.log(this.orderInfo)
+        this.zipCode = value;
+
+    },
+
+     alertCodeNotValid(){
+    return  this.$ionic.alertController
+    .create({
+        cssClass: 'my-custom-class',
+        header: 'Error',
+        message: this.$t('frontend.home.zipCodeNotValid') ,
+        buttons: [                   
+        {
+          text: this.$t('frontend.home.acept'),
+          handler: () => {                                 
+                        
+          },
+        },
+        ],
+    })
+    .then(a => a.present())
+                
+  },
+
+  existError(){
+      return false;
+
+  },
+
+  validateCant(event ){
+      if(event>0)
+        return event;
+      else
+        return '1';
+      
+     },
+    
    }
 
 }

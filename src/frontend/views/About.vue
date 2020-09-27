@@ -1,12 +1,14 @@
 <template>
-    <ion-app>
+    <ion-page>
+     
         <ion-content >
 
             <ion-header>
                 <ion-toolbar>
-               
-                <img :src="restaurantLogo" class="menu-col-4" style="padding: 7px;max-height: 50px;float:left;width: auto;">
-                <h3 class="menu-col-8" style="float:left, text-align:left">{{$t('frontend.menu.about')}}</h3>
+                    
+                    
+                    <img :src="restaurantLogo" class="menu-col-4" style="padding: 7px;max-height: 50px;float:left;width: auto;">
+                    <h3 class="menu-col-8" style="float:left, text-align:left">{{$t('frontend.menu.about')}}</h3>
                 </ion-toolbar>
             </ion-header>
 
@@ -47,7 +49,7 @@
             </ion-toolbar>
         </ion-footer>
 
-    </ion-app>
+    </ion-page>
 
     
 </template>
@@ -55,9 +57,9 @@
 
 
 <script>
+
 import { add } from "ionicons/icons";
 import { addIcons } from "ionicons";
-
 
 addIcons({
   "ios-add": add.ios,
@@ -79,20 +81,23 @@ export default {
             restaurantLogo: '',
             restaurantEmail: '',
             restaurantAddress: '', 
-            slideOpts:{speed: 400, slideShadows: true, initialSlide: 1},
+            slideOpts:{speed: 400, slideShadows: true, initialSlide:1,  slidesPerView: 3,},
             abouts: [],
             spinner: false,
         }
     },
+    components: {
+  },
     methods:{
         sliderstData: function(){
             this.spinner =true
 
             Api.fetchAll("About").then(response => { 
-                this.spinner = false         
+                       
                 if(response.status === 200){                     
                      console.log("Sliders Data: " + JSON.stringify(response.data))
                      this.abouts = response.data;
+                      this.spinner = false 
                 }  
             })
             .catch(e => {
@@ -124,11 +129,10 @@ export default {
     
         
     }
-    
-    
    
-
 </script>
+
+
 
 <style scope="scoped" >
  /* #app1 {

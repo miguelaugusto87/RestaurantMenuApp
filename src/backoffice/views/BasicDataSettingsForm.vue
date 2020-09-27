@@ -78,7 +78,6 @@ export default {
     
     this.id = this.$route.params.settingId;
     if (this.id){
-      this.title = 'Edit settings';
       Api.fetchById(this.modelName, this.id)
             .then(response => {
                this.name = response.data.Name;

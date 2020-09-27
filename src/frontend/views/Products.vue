@@ -1,5 +1,5 @@
 <template>
-    <ion-content padding>
+    <div padding >
 
         <ion-label style="padding: 20px 100px;">
           <h1>{{$t('frontend.product.title')}} {{category}}</h1>            
@@ -14,11 +14,8 @@
             <div slot-scope="scope">
               <span v-if="scope.isSmall || scope.noMatch" > 
 
-                <div  v-for="pr in prod" :key="pr._id" class="menu-col-12 card-category">
+                  <div  v-for="pr in prod" :key="pr._id" class="menu-col-12 card-category">
                     <ion-card style="padding:12px" >
-
-                     
-
                       <div >
                         <img class="menu-col-12" :src="pr.ImageUrl">                         
                     
@@ -46,7 +43,7 @@
                             :page_title= pr.Name 
                             has_icon
                             ></vue-goodshare-email>
-                          </div>
+                        </div>
                       </div>
                       <ion-card-content>
 
@@ -55,7 +52,7 @@
                         </ion-card-header>
 
                         <ion-item >
-                          <ion-input  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>                
+                          <ion-input  type="number" min=1 :value="pr.count || 1" @input="pr.count = $event.target.value" style="border: 1px solid grey;text-align: center;" ></ion-input>              
                         </ion-item>
 
                         <!-- <ion-item> -->
@@ -64,13 +61,13 @@
 
                       
                       </ion-card-content>
-                        <div class="menu-col-12" style="text-align: right">
-                          <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
-                          <ion-button size="default" fill="outline" @click="productDetail(pr._id, pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
-                        </div>
+                      <div class="menu-col-12" style="text-align: right">
+                        <ion-button size="default" fill="outline"  @click="addToCart(pr._id, pr.Name, pr.SalePrice, pr.count || 1 )"> <ion-icon name="cart"></ion-icon></ion-button>
+                        <ion-button size="default" fill="outline" @click="productDetail(pr._id, pr.Name, pr.SalePrice, pr.Description, pr.ImageUrl)"> <ion-icon name="eye"></ion-icon></ion-button>
+                      </div>
                   
-                  </ion-card>
-                </div>
+                    </ion-card>
+                  </div>
                 
               </span>
 
@@ -219,7 +216,7 @@
 
         </div>
 
-    </ion-content>
+    </div>
 </template>
 
 <script>
@@ -257,6 +254,9 @@ export default {
   },
   methods: {
       addToCart: function(id, name, price, count){
+        if(count <1)
+          return this.cantNoValida();
+
          let p = {
             "ProductId": id,
             "Name": name,
@@ -319,9 +319,33 @@ export default {
         },
       })
       .then(m => m.present())
-      }
+      },
      
-
+      cantNoValida(){
+      return  this.$ionic.alertController
+      .create({
+          cssClass: 'my-custom-class',
+          header: 'Error',
+          message: this.$t('frontend.home.cantNotValid'),
+          buttons: [                   
+          {
+              text: this.$t('frontend.home.acept'),
+              handler: () => {                                 
+                            
+              },
+          },
+          ],
+      })
+      .then(a => a.present())
+                  
+    },
+      validateCant(event ){
+      if(event>0)
+        return event;
+      else     
+         return '1';
+      
+     },
   }
 };
 </script>
@@ -394,5 +418,6 @@ export default {
     margin: 3px 1.5px;
     border-radius: 3px;
 }
+
 
 </style>

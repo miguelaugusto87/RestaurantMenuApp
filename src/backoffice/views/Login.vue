@@ -1,7 +1,7 @@
 <template>
     <ion-content>
       <ion-card>
-        <div class="logo">
+        <div v-if="basicSettings != null" class="logo">
            <!-- <img  src="../../frontend/views/logo.png" > -->
            <img  :src="basicSettings.ImageUrl" >
         </div>

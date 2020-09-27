@@ -61,8 +61,8 @@ export var payAuthorizeNet = {
                         "payment": {
                             "creditCard": {
                                 "cardNumber": payDatas.transactionRequest.payment.creditCard.cardNumber,
-                                "expirationDate": payDatas.transactionRequest.payment.creditCard.expirationDate //format YYYY-MM
-                                // "cardCode": "999"
+                                "expirationDate": payDatas.transactionRequest.payment.creditCard.expirationDate, //format YYYY-MM
+                                 "cardCode":  payDatas.transactionRequest.payment.creditCard.cardCode
                             }
                         },
                         "lineItems": payDatas.transactionRequest.lineitems,

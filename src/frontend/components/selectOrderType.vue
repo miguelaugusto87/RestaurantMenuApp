@@ -37,14 +37,16 @@
           v-bind:value="address">
           </ion-input>
         </ion-item>
+        <ion-item v-if="selected=='Delivery'">
+          <ion-input type="text" name="code" :placeholder="placeholderCode"
+          @input="code = $event.target.value" required @change="ValidateCode($event.target.value)"
+          v-bind:value="code">
+          </ion-input>
+        </ion-item>
 
         
 
-        <ion-item v-if="selected=='PickUp' && selectPickHour">
-          <!-- <ion-input type="time" name="pickup" min="12:00:00:00" max="18:00" step="600"
-          @input="hourPick = $event.target.value" 
-          v-bind:value="hourPick">
-          </ion-input> -->
+        <ion-item v-if="selected=='PickUp' && selectPickHour">         
           <ion-datetime display-format="HH:mm" name="pickup" :max="maxHour" 
          :min="minHour" required=true 
           @input="hourPick = $event.target.value" 
@@ -82,8 +84,10 @@ export default {
     placeholderName: { type: String },
     placeholderPhone: { type: String },
     placeholderAddress: { type: String },
+    placeholderCode: { type: String },
     placeholderPickUp: { type: String },
     requiredData: { type: String },
+    zipCodeNotValid: { type: String },
     contactedBy: { type: String },
   },
   created: function(){
@@ -97,6 +101,7 @@ export default {
       email:'',
       phone:'' ,
       address:'',
+      code:'',
       clientId:'',
       hourPick:new Date().getHours()+':' +new Date().getMinutes(),
       spinner: false,
@@ -104,7 +109,9 @@ export default {
       selectPickHour: false,
       minHour: '12:00',
       maxHour: '23:59',
-      minTimeToCook: 0
+      minTimeToCook: 0,      
+      deliveryZone:'',
+      zipCodes: [],
     }
   },
 components:{  
@@ -119,6 +126,8 @@ methods: {
             this.selectPickHour = response.data[0].SelectPickHour;           
             this.minTimeToCook = response.data[0].MinTimeToCook;
 
+            this.deliveryZone = response.data[0].DeliveryZone
+            this.zipCodes = response.data[0].ZipCodes
            
             let min = Moment(response.data[0].PickFrom ,'kk:mm')       
             let max = Moment(response.data[0].PickTo ,'kk:mm')
@@ -146,9 +155,14 @@ methods: {
 
   deliveryAction(){
 
+    let emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+      if (emailRegex.test(this.email) == false)
+            return this.alertEmailNotValid();
+
+
     if(this.email ==='' || this.name ==='' || this.phone ==='')
       return this.alertRequiredDatas();
-    if(this.selected === 'Delivery' && this.address === '')
+    if(this.selected === 'Delivery' && ( this.address === '' || this.code===''))
       return this.alertRequiredDatas();
     if(this.selected === 'PickUp' && this.selectPickHour && this.pickup === '')
       return this.alertRequiredDatas();
@@ -164,12 +178,12 @@ methods: {
       "OrderType":this.selected,
       "State":"Pending payment",
       "ClientId" : this.clientId,
-      "AddressToDeliver": this.address,      
+      "AddressToDeliver": this.address +' ZipCode: '+ this.code,      
       "HourToPick": this.hourPick,
       "tableService": this.table,
     }       
 
-    if(this.selected === 'Delivery'){
+    if(this.selected === 'Delivery'){     
       EventBus.$emit('addressToDeliver', this.address );      
       EventBus.$emit('orderType', 'Delivery' ); 
     }
@@ -207,6 +221,10 @@ methods: {
   },
 
   getClient(email){
+
+    let emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+      if (emailRegex.test(email) == false)
+            return this.alertEmailNotValid();
 
     this.spinner = true;
 
@@ -363,6 +381,51 @@ methods: {
  
   },
 
+  ValidateCode(event){
+    if(this.zipCodes.length > 0){
+      const zip = this.zipCodes.filter(zc => zc === event);
+      if(!zip.length >0)
+        return this.alertCodeNotValid();     
+    }
+  },
+
+  alertCodeNotValid(){
+    return  this.$ionic.alertController
+    .create({
+        cssClass: 'my-custom-class',
+        header: 'Error',
+        message: this.zipCodeNotValid + ' << ' + this.deliveryZone + ' >>',
+        buttons: [                   
+        {
+          text: this.buttonAcept,
+          handler: () => {                                 
+                        
+          },
+        },
+        ],
+    })
+    .then(a => a.present())
+                
+  },
+
+  alertEmailNotValid(){
+    return  this.$ionic.alertController
+    .create({
+        cssClass: 'my-custom-class',
+        header: 'Error',
+        message: 'Not valid email',
+        buttons: [                   
+        {
+          text: this.buttonAcept,
+          handler: () => {                                 
+                        
+          },
+        },
+        ],
+    })
+    .then(a => a.present())
+                
+  },
 }
  
 
